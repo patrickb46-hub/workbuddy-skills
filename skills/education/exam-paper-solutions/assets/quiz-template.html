@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<!--
+  出题模板 · exam-paper-solutions 出题分支专用
+  用法：整份复制 → 改 <title>、header、nav、main、footer → 删掉示例题 → 填入真题。
+  【不要改 CSS】版式是定死的：左侧固定目录 + 右侧题面 + 每题下方可折叠答案。
+  三条铁律：
+    1. 答案必须用 .ans 结构（checkbox + label），不要用 <details>——<details> 打印时答案会整块消失。
+    2. 目录里每个 <a> 的 href 必须对应正文某个 id，加了新章节就补一条目录。
+    3. 打印由 CSS 自动处理：目录隐藏、答案全部展开、按钮隐藏。不需要写任何 JS。
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>【标题】</title>
+<style>
+:root{
+  --ink:#1a1a1a; --ink2:#3d3d42; --ink3:#6b6b72;
+  --paper:#fbfaf7; --card:#ffffff; --line:#e3ded4;
+  --accent:#8b1f1f; --accent2:#1f4e5f; --gold:#a8842c;
+  --tint:#f4f0e7; --warnbg:#fdf6e8; --warnline:#d8a94a;
+  --ansbg:#f2f6f2; --ansline:#7fa37f;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Songti SC","STSong","SimSun","Noto Serif CJK SC",serif;
+  font-size:16.5px; line-height:1.95; letter-spacing:.02em;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px 90px;display:grid;grid-template-columns:206px minmax(0,1fr);gap:44px}
+@media (max-width:900px){.wrap{grid-template-columns:1fr;gap:0;padding:0 18px 60px}.toc{display:none}}
+
+/* 页头 */
+header.top{grid-column:1/-1;padding:54px 0 30px;border-bottom:2px solid var(--ink);margin-bottom:14px}
+header.top .kicker{font-family:-apple-system,"PingFang SC",sans-serif;font-size:12px;letter-spacing:.34em;color:var(--accent);margin-bottom:14px}
+header.top h1{font-size:37px;line-height:1.32;margin:0 0 10px;font-weight:700;letter-spacing:.03em}
+header.top .sub{font-size:15px;color:var(--ink3);font-family:-apple-system,"PingFang SC",sans-serif}
+header.top .src{margin-top:20px;font-size:12.5px;color:var(--ink3);font-family:-apple-system,"PingFang SC",sans-serif;line-height:1.9;border-left:2px solid var(--line);padding-left:14px}
+
+/* 左侧目录 */
+.toc{position:sticky;top:26px;align-self:start;padding-top:34px;font-family:-apple-system,"PingFang SC",sans-serif;font-size:13px;line-height:1.75;
+     max-height:calc(100vh - 52px);overflow-y:auto;overscroll-behavior:contain}
+.toc::-webkit-scrollbar{width:4px}
+.toc::-webkit-scrollbar-thumb{background:#d9d3c7;border-radius:2px}
+.toc .h{font-size:11px;letter-spacing:.26em;color:var(--ink3);margin-bottom:12px}
+.toc a{display:block;color:var(--ink2);text-decoration:none;padding:4px 0 4px 11px;border-left:2px solid transparent}
+.toc a:hover{color:var(--accent);border-left-color:var(--accent);background:#f6f2ea}
+.toc a.lv2{padding-left:22px;font-size:12.3px;color:var(--ink3)}
+
+main{padding-top:34px;min-width:0}
+
+/* 标题 */
+main h2{font-size:24px;line-height:1.45;margin:56px 0 20px;padding-top:26px;border-top:1px solid var(--line);font-weight:700;letter-spacing:.04em}
+main h2:first-child{margin-top:0;border-top:none;padding-top:0}
+main h2 .num{color:var(--accent);font-family:-apple-system,"PingFang SC",sans-serif;font-size:15px;margin-right:12px;letter-spacing:.06em;vertical-align:2px}
+main h3{font-size:18.5px;margin:38px 0 14px;font-weight:700;color:var(--accent2);padding-left:12px;border-left:4px solid var(--accent2);line-height:1.5}
+main h4{font-size:16px;margin:26px 0 10px;font-weight:700;color:var(--ink)}
+
+p{margin:0 0 15px;text-align:justify}
+.lead{font-size:17px;color:var(--ink2);border-left:3px solid var(--gold);padding-left:16px;margin:0 0 24px}
+ul,ol{margin:0 0 17px;padding-left:26px}
+li{margin-bottom:8px;text-align:justify}
+li::marker{color:var(--accent)}
+strong{font-weight:700;color:#000}
+mark{background:linear-gradient(transparent 58%,#f7e6a8 58%);color:inherit;padding:0 1px}
+
+/* 材料 / 引文 */
+blockquote{margin:20px 0;padding:18px 22px;background:var(--card);border-left:3px solid var(--accent);
+           font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:17px;line-height:2.1;color:var(--ink2)}
+blockquote .cr{display:block;margin-top:10px;font-size:13px;color:var(--ink3);font-family:-apple-system,"PingFang SC",sans-serif;font-style:normal}
+
+/* 表格 */
+.tw{overflow-x:auto;margin:22px 0 8px}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.75;background:var(--card)}
+caption{caption-side:top;text-align:left;font-size:13px;color:var(--ink3);padding-bottom:8px;font-family:-apple-system,"PingFang SC",sans-serif}
+th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+th{background:var(--tint);font-weight:700;font-size:14px}
+tbody tr:nth-child(even) td{background:#fdfcf9}
+
+/* 提示盒 */
+.note,.warn{margin:22px 0;padding:16px 20px;font-size:15px;line-height:1.85;background:var(--tint);border:1px solid var(--line)}
+.note::before,.warn::before{display:block;font-family:-apple-system,"PingFang SC",sans-serif;font-size:11px;letter-spacing:.22em;margin-bottom:8px;color:var(--ink3)}
+.note::before{content:"要点"}
+.warn{background:var(--warnbg);border-color:var(--warnline)}
+.warn::before{content:"注意";color:#a5761a}
+
+/* 题目与答案 */
+.q{margin:26px 0 8px;font-weight:700;font-size:16px;line-height:1.85}
+.q .idx{color:var(--accent);margin-right:6px;font-family:-apple-system,"PingFang SC",sans-serif}
+.ans{margin:0 0 20px;border:1px solid var(--ansline);background:var(--ansbg);overflow:hidden}
+.ans>input{position:absolute;opacity:0;pointer-events:none;width:0;height:0}
+.ans>label{display:block;cursor:pointer;padding:9px 16px;font-size:13px;color:#3f6b3f;
+           font-family:-apple-system,"PingFang SC",sans-serif;letter-spacing:.12em;user-select:none;background:#eaf1ea}
+.ans>label::before{content:"▸ ";font-size:11px}
+.ans>label:hover{background:#e0e9e0}
+.ans-body{display:none;padding:14px 18px 16px;font-size:15.4px;line-height:1.95;color:var(--ink2);border-top:1px solid var(--ansline)}
+.ans>input:checked~label::before{content:"▾ "}
+.ans>input:checked~.ans-body{display:block}
+.ans-body p:last-child{margin-bottom:0}
+.ans-body strong{color:#1e4a1e}
+/* 答案框（沿用全解那套） */
+.final{display:inline-block;padding:4px 13px;border:2px solid var(--accent);border-radius:3px;font-weight:700;color:var(--accent);background:#fff}
+
+/* 展开全部按钮 */
+.expand{position:fixed;right:22px;bottom:22px;z-index:99;background:var(--accent);color:#fff;border:none;border-radius:26px;
+        padding:11px 20px;font-family:-apple-system,"PingFang SC",sans-serif;font-size:13px;letter-spacing:.06em;cursor:pointer;
+        box-shadow:0 6px 18px rgba(139,31,31,.28)}
+.expand:hover{background:#6f1919}
+
+hr{border:none;border-top:1px solid var(--line);margin:36px 0}
+footer.end{grid-column:1/-1;margin-top:60px;padding-top:22px;border-top:1px solid var(--line);
+           font-size:12.5px;color:var(--ink3);font-family:-apple-system,"PingFang SC",sans-serif;line-height:1.9}
+
+/* 打印：目录与按钮隐藏，答案全部展开 */
+@media print{
+  :root{--paper:#fff}
+  body{background:#fff;font-size:10.5pt;line-height:1.7}
+  .wrap{display:block;max-width:none;padding:0}
+  header.top{padding-top:0}
+  .toc,.expand,.ans>label{display:none!important}
+  main h2{page-break-after:avoid;break-after:avoid;margin-top:26pt}
+  main h3,main h4{page-break-after:avoid;break-after:avoid}
+  blockquote,.note,.warn,.ans{page-break-inside:avoid;break-inside:avoid}
+  .ans{border:1px solid #ccc;break-inside:auto}
+  .ans-body{display:block!important}
+  table{page-break-inside:auto;break-inside:auto}
+  tr,td,th{page-break-inside:avoid;break-inside:avoid}
+  thead{display:table-header-group}
+  a{color:inherit;text-decoration:none}
+  @page{margin:16mm 15mm}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="kicker">【学科】 · 出题</div>
+  <h1>【主标题：例如 一元二次方程 · 专项练习】</h1>
+  <div class="sub">【副标题：范围 ｜ 题量 ｜ 难度】</div>
+  <div class="src">【一行说明：依据什么教材/章节/考点出的，用什么口径。若含自编题，写明「自编，非原卷」。】</div>
+</header>
+
+<nav class="toc">
+  <div class="h">目录</div>
+  <a href="#s1">01　【第一大题】</a>
+  <a class="lv2" href="#s1-1">【子块】</a>
+  <a href="#s2">02　【第二大题】</a>
+</nav>
+
+<main>
+
+<h2 id="s1"><span class="num">01</span>【第一大题：例如 基础填空】</h2>
+
+<div class="q"><span class="idx">1.</span>【题干。填空处用 ＿＿＿＿ 表示，不要用全角空格拼假下划线——打印会消失。】</div>
+<div class="ans">
+  <input type="checkbox" id="an1">
+  <label for="an1">答案与解析</label>
+  <div class="ans-body">
+    <span class="final">【答案】</span>
+    <p>【解析：为什么是这个答案，踩分点在哪，易错在哪。】</p>
+  </div>
+</div>
+
+<div class="q"><span class="idx">2.</span>【带材料的题：材料用 blockquote，小题用 (1)(2) 分行】</div>
+<blockquote>【材料原文或已知条件】<span class="cr">【出处，可省略】</span></blockquote>
+<div class="ans">
+  <input type="checkbox" id="an2">
+  <label for="an2">答案与解析</label>
+  <div class="ans-body">
+    <p><strong>（1）</strong>【答案】</p>
+    <p><strong>（2）</strong>【答案】</p>
+    <p>【解析】</p>
+  </div>
+</div>
+
+<!-- 需要配图时：内联 SVG，照 SKILL.md「几何图」一节；画完必须跑 figcheck 复检
+<div class="fig"><svg viewBox="0 0 320 220">...</svg></div>
+-->
+
+<h2 id="s2"><span class="num">02</span>【第二大题：例如 解答题】</h2>
+
+<div class="q"><span class="idx">3.</span>【题干】</div>
+<div class="ans">
+  <input type="checkbox" id="an3">
+  <label for="an3">答案与解析</label>
+  <div class="ans-body">
+    <p>【解答过程，一步一行】</p>
+    <span class="final">【最终答案】</span>
+  </div>
+</div>
+
+</main>
+
+<footer class="end">【收尾说明：题量合计、建议用时、哪些是易错重点。】</footer>
+</div>
+
+<button class="expand" id="expandAll">展开全部答案</button>
+<script>
+(function(){var b=document.getElementById('expandAll');if(!b)return;
+b.addEventListener('click',function(){var xs=document.querySelectorAll('.ans > input');
+var closed=false;xs.forEach(function(i){if(!i.checked)closed=true;});
+xs.forEach(function(i){i.checked=closed;});
+b.textContent=closed?'收起全部答案':'展开全部答案';});})();
+</script>
+</body>
+</html>

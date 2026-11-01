@@ -1,0 +1,49 @@
+# ---- macOS ----
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# ---- 运行时与缓存 ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+node_modules/
+.cache/
+*.log
+
+# ---- 凭据与登录态（绝不上传）----
+.env
+.env.*
+*.key
+*.pem
+*.p12
+cookies.json
+biliup-cookies.json
+*.exp
+pw-profile/
+.netrc
+secrets.*
+
+# ---- 构建产物 ----
+build/
+dist/
+out/
+*.zip
+*.mp4
+*.mov
+*.wav
+
+# ---- 本地状态与工作目录 ----
+state/
+.workbuddy/
+.claude/
+.codex/
+.agents/
+*.local.md
+
+# ---- 编辑器 ----
+.vscode/
+.idea/
+*.swp
+*~

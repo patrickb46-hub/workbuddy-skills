@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>试卷图片处理工具 · 本地版</title>
+<style>
+:root{
+  --ink:#1f2328; --sub:#656d76; --line:#d0d7de; --bg:#f6f8fa; --card:#fff;
+  --accent:#1a5fb4; --accent-soft:#e8f0fe; --ok:#1a7f37; --ok-soft:#e6f4ea;
+  --warn:#8a6100; --warn-soft:#fff8e5; --err:#b3261e; --err-soft:#fdecea;
+  --radius:8px; --mono:"SF Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:14px/1.6 -apple-system,"PingFang SC","Helvetica Neue",Arial,sans-serif;
+  display:flex; flex-direction:column; overflow:hidden;
+}
+h1,h2,h3{margin:0}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent)}
+
+/* ---------- 顶栏 ---------- */
+header{
+  display:flex; align-items:center; gap:12px; padding:10px 16px;
+  background:var(--card); border-bottom:1px solid var(--line); flex:0 0 auto;
+}
+header .logo{font-weight:700; font-size:16px; letter-spacing:.2px}
+header .logo span{color:var(--sub); font-weight:400; font-size:12.5px; margin-left:8px}
+header .spacer{flex:1}
+.pill{
+  display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:999px;
+  font-size:12px; background:var(--ok-soft); color:var(--ok); border:1px solid #bfe3c8;
+}
+.pill.warn{background:var(--warn-soft); color:var(--warn); border-color:#f0dfa8}
+.pill.gray{background:var(--bg); color:var(--sub); border-color:var(--line)}
+
+/* ---------- 布局 ---------- */
+main{flex:1; display:grid; grid-template-columns:352px minmax(0,1fr); min-height:0}
+.pane{min-height:0; display:flex; flex-direction:column; overflow:hidden}
+.pane.left{border-right:1px solid var(--line); background:var(--card)}
+.pane.right{overflow-y:auto; padding:14px 16px 60px}
+
+/* ---------- 左栏：目录与文件 ---------- */
+.crumbs{padding:9px 12px; border-bottom:1px solid var(--line); display:flex; flex-direction:column; gap:7px}
+.crumbs .row{display:flex; gap:6px; align-items:center; flex-wrap:wrap}
+.crumbs .pathline{font-family:var(--mono); font-size:11.5px; color:var(--sub); word-break:break-all}
+.chip{
+  border:1px solid var(--line); background:var(--bg); border-radius:999px;
+  padding:2px 10px; font-size:12px; color:var(--ink);
+}
+.chip:hover{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
+.dirs{padding:6px 8px; border-bottom:1px solid var(--line); display:flex; flex-wrap:wrap; gap:5px; max-height:112px; overflow-y:auto}
+.dirbtn{
+  border:1px solid var(--line); background:var(--card); border-radius:6px;
+  padding:3px 9px; font-size:12.5px; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.dirbtn:hover{border-color:var(--accent); background:var(--accent-soft)}
+.filelist{flex:1; overflow-y:auto; padding:6px 8px 16px}
+.filehead{
+  display:flex; align-items:center; gap:8px; padding:5px 4px 8px; font-size:12.5px; color:var(--sub);
+  position:sticky; top:0; background:var(--card); z-index:2; border-bottom:1px dashed var(--line);
+}
+.fi{
+  display:grid; grid-template-columns:18px 62px minmax(0,1fr); gap:8px; align-items:center;
+  padding:6px; border-radius:6px; border:1px solid transparent; cursor:pointer;
+}
+.fi:hover{background:var(--bg)}
+.fi.cur{border-color:var(--accent); background:var(--accent-soft)}
+.fi img.th{width:62px; height:52px; object-fit:cover; border-radius:4px; background:var(--bg); border:1px solid var(--line)}
+.fi .nm{font-size:12.8px; word-break:break-all; line-height:1.35}
+.fi .mt{font-size:11.5px; color:var(--sub); margin-top:2px}
+.fi .mt .badge{margin-right:4px}
+.badge{
+  display:inline-block; padding:0 5px; border-radius:4px; font-size:10.5px; font-weight:600;
+  background:var(--bg); color:var(--sub); border:1px solid var(--line);
+}
+.badge.warn{background:var(--warn-soft); color:var(--warn); border-color:#f0dfa8}
+.badge.ok{background:var(--ok-soft); color:var(--ok); border-color:#bfe3c8}
+.badge.info{background:var(--accent-soft); color:var(--accent); border-color:#c8dcfa}
+.empty{padding:26px 12px; text-align:center; color:var(--sub); font-size:13px}
+
+/* ---------- 右栏：卡片 ---------- */
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); margin-bottom:12px; overflow:hidden}
+.card>h2{
+  font-size:13px; padding:9px 13px; border-bottom:1px solid var(--line);
+  display:flex; align-items:center; gap:8px; background:#fbfcfd;
+}
+.card>h2 .n{
+  width:18px; height:18px; border-radius:50%; background:var(--accent); color:#fff;
+  font-size:11px; display:grid; place-items:center; flex:0 0 auto;
+}
+.card .body{padding:12px 13px}
+.card .hint{font-size:12px; color:var(--sub); margin-top:6px}
+.row{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.grow{flex:1; min-width:0}
+label.f{display:flex; align-items:center; gap:6px; font-size:13px; white-space:nowrap}
+input[type=number],input[type=text],select{
+  border:1px solid var(--line); border-radius:6px; padding:4px 7px; background:#fff; min-width:0;
+}
+input[type=number]{font-family:var(--mono); text-align:right}
+input[type=number]:focus,input[type=text]:focus,select:focus{outline:2px solid var(--accent-soft); border-color:var(--accent)}
+input[type=checkbox]{width:15px; height:15px; accent-color:var(--accent)}
+.btn{border:1px solid var(--line); background:#fff; border-radius:6px; padding:5px 11px; font-size:13px}
+.btn:hover{border-color:var(--accent); color:var(--accent)}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600}
+.btn.primary:hover{filter:brightness(1.08); color:#fff}
+.btn.ghost{background:transparent}
+.btn.sm{padding:3px 8px; font-size:12px}
+.btn:disabled{opacity:.45; cursor:not-allowed}
+.seg{display:inline-flex; border:1px solid var(--line); border-radius:6px; overflow:hidden}
+.seg button{border:0; background:#fff; padding:5px 10px; font-size:12.5px; border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button:hover{background:var(--accent-soft); color:var(--accent)}
+.seg button.on{background:var(--accent); color:#fff}
+.sect{margin-top:11px; padding-top:10px; border-top:1px dashed var(--line)}
+.sect:first-child{margin-top:0; padding-top:0; border-top:0}
+.sect .t{font-size:12.5px; font-weight:600; margin-bottom:6px; color:var(--ink)}
+.sect .t em{font-style:normal; font-weight:400; color:var(--sub); margin-left:6px; font-size:11.5px}
+
+/* ---------- 预览与裁切 ---------- */
+.pvwrap{position:relative; background:#eef1f4; border:1px solid var(--line); border-radius:6px; overflow:hidden; text-align:center; min-height:190px; display:flex; align-items:center; justify-content:center}
+.pvwrap img{display:block; max-width:100%; max-height:62vh; user-select:none; -webkit-user-drag:none}
+.pvwrap.drag{cursor:crosshair}
+#cropbox{position:absolute; border:2px solid var(--accent); background:rgba(26,95,180,.14); box-shadow:0 0 0 9999px rgba(20,24,30,.42); display:none}
+#cropbox .hd{position:absolute; width:12px; height:12px; background:#fff; border:2px solid var(--accent); border-radius:2px}
+#cropbox .hd.nw{left:-7px; top:-7px; cursor:nwse-resize}
+#cropbox .hd.ne{right:-7px; top:-7px; cursor:nesw-resize}
+#cropbox .hd.sw{left:-7px; bottom:-7px; cursor:nesw-resize}
+#cropbox .hd.se{right:-7px; bottom:-7px; cursor:nwse-resize}
+.pvbar{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:8px; font-size:12.5px; color:var(--sub)}
+
+/* ---------- 结果表 ---------- */
+table.res{width:100%; border-collapse:collapse; font-size:12.5px}
+table.res th,table.res td{border-bottom:1px solid var(--line); padding:5px 7px; text-align:left; vertical-align:top}
+table.res th{background:#fbfcfd; color:var(--sub); font-weight:600; position:sticky; top:0}
+table.res td.p{font-family:var(--mono); font-size:11px; word-break:break-all; color:var(--sub)}
+.msg{padding:8px 11px; border-radius:6px; font-size:12.8px; margin-top:9px; display:none}
+.msg.show{display:block}
+.msg.ok{background:var(--ok-soft); color:var(--ok)}
+.msg.err{background:var(--err-soft); color:var(--err)}
+.msg.info{background:var(--accent-soft); color:var(--accent)}
+.spin{display:inline-block; width:12px; height:12px; border:2px solid #fff6; border-top-color:#fff; border-radius:50%; animation:sp .7s linear infinite; vertical-align:-2px}
+@keyframes sp{to{transform:rotate(360deg)}}
+details.help{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:9px 13px; font-size:12.8px}
+details.help summary{cursor:pointer; font-weight:600}
+details.help ul{margin:8px 0 0 18px; padding:0; color:var(--sub)}
+details.help li{margin:3px 0}
+kbd{font-family:var(--mono); font-size:11.5px; background:var(--bg); border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; padding:0 4px}
+.split2{display:grid; grid-template-columns:1fr 1fr; gap:8px 14px; align-items:center}
+@media (max-width:1040px){main{grid-template-columns:300px minmax(0,1fr)} .split2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">试卷图片处理工具<span>本地版 · 不联网</span></div>
+  <div class="spacer"></div>
+  <span class="pill gray" id="pillEngine">引擎检测中…</span>
+  <button class="btn sm ghost" id="btnCap">重新检测</button>
+  <button class="btn sm ghost" id="btnQuit">停止服务</button>
+</header>
+
+<main>
+  <!-- ===================== 左：选图 ===================== -->
+  <section class="pane left">
+    <div class="crumbs">
+      <div class="row" id="roots"></div>
+      <div class="row">
+        <button class="btn sm" id="btnUp">↑ 上级</button>
+        <button class="btn sm" id="btnHome">主目录</button>
+        <button class="btn sm" id="btnRefresh">刷新</button>
+      </div>
+      <div class="pathline" id="curPath">—</div>
+    </div>
+    <div class="dirs" id="dirs"></div>
+    <div class="filelist" id="filelist">
+      <div class="empty">正在载入…</div>
+    </div>
+  </section>
+
+  <!-- ===================== 右：加工 ===================== -->
+  <section class="pane right">
+
+    <div class="card">
+      <h2><span class="n">1</span>选图 <em style="font-weight:400;color:var(--sub);font-style:normal">在左栏点文件名来编辑，勾选框决定哪些会被处理</em></h2>
+      <div class="body">
+        <div class="row">
+          <button class="btn sm" id="selAll">全选</button>
+          <button class="btn sm" id="selNone">全不选</button>
+          <button class="btn sm" id="selNeed">只选需转码的</button>
+          <button class="btn sm" id="selInv">反选</button>
+          <span class="pill gray" id="pillSel">已选 0 / 0</span>
+          <div class="spacer" style="flex:1"></div>
+          <span class="pill warn" id="pillConv" style="display:none"></span>
+        </div>
+        <div class="row" style="margin-top:9px">
+          <span style="font-size:12.5px;color:var(--sub)">一键式：</span>
+          <button class="btn sm" id="presetRead">生成 1500px 阅读副本</button>
+          <button class="btn sm" id="presetJpg">HEIC → JPG</button>
+          <button class="btn sm" id="presetOrient">只摆正方向</button>
+          <button class="btn sm" id="presetSplitV">上下分栏成两张</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="n">2</span>预览与裁切 <em style="font-weight:400;color:var(--sub);font-style:normal" id="pvName">未选中图片</em></h2>
+      <div class="body">
+        <div class="pvwrap" id="pvwrap">
+          <img id="pv" alt="" style="display:none">
+          <div id="cropbox">
+            <div class="hd nw" data-h="nw"></div><div class="hd ne" data-h="ne"></div>
+            <div class="hd sw" data-h="sw"></div><div class="hd se" data-h="se"></div>
+          </div>
+          <div class="empty" id="pvEmpty">在左栏点一张图片，这里会显示预览</div>
+        </div>
+        <div class="pvbar">
+          <button class="btn sm" id="btnCropOn">开始框选裁切</button>
+          <button class="btn sm" id="btnCropClear">清除裁切</button>
+          <span id="cropInfo">裁切：无</span>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <span style="font-size:12.5px;color:var(--sub)">快速切半：</span>
+          <button class="btn sm" data-half="0,0,1,.5">上 1/2</button>
+          <button class="btn sm" data-half="0,.5,1,1">下 1/2</button>
+          <button class="btn sm" data-half="0,0,.5,1">左 1/2</button>
+          <button class="btn sm" data-half=".5,0,1,1">右 1/2</button>
+          <button class="btn sm" data-half="0,0,1,.34">上 1/3</button>
+          <button class="btn sm" data-half="0,.33,1,.67">中 1/3</button>
+          <button class="btn sm" data-half="0,.66,1,1">下 1/3</button>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <label class="f">比例 x0 <input type="number" id="rx0" step="0.01" min="0" max="1" style="width:74px"></label>
+          <label class="f">y0 <input type="number" id="ry0" step="0.01" min="0" max="1" style="width:74px"></label>
+          <label class="f">x1 <input type="number" id="rx1" step="0.01" min="0" max="1" style="width:74px"></label>
+          <label class="f">y1 <input type="number" id="ry1" step="0.01" min="0" max="1" style="width:74px"></label>
+          <button class="btn sm" id="btnCropApply">应用这组比例</button>
+        </div>
+        <div class="hint">框选或用上面的比例框精确定位；坐标系是<strong>摆正方向之后</strong>的图。裁切框会随旋转一起更新。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="n">3</span>加工工序 <em style="font-weight:400;color:var(--sub);font-style:normal">上面的旋转/翻转/裁切会先应用到当前图片</em></h2>
+      <div class="body">
+        <div class="sect">
+          <div class="t">旋转与翻转<em>角度为正 = 顺时针</em></div>
+          <div class="row">
+            <button class="btn sm" data-rot="-90">⟲ 逆时针 90°</button>
+            <button class="btn sm" data-rot="90">⟳ 顺时针 90°</button>
+            <button class="btn sm" data-rot="180">↻ 180°</button>
+            <label class="f">微调 <input type="number" id="rotFine" step="0.5" value="0" style="width:74px"> °</label>
+            <button class="btn sm" id="btnRotFine">应用角度</button>
+            <button class="btn sm" id="btnRotReset">角度归零</button>
+            <span style="flex:1"></span>
+            <button class="btn sm" id="btnFlipH">水平翻转</button>
+            <button class="btn sm" id="btnFlipV">垂直翻转</button>
+          </div>
+        </div>
+
+        <div class="sect">
+          <div class="t">缩放<em>不改原图，只影响输出</em></div>
+          <div class="split2">
+            <label class="f"><input type="radio" name="rs" value="none" checked> 保持原始尺寸</label>
+            <label class="f"><input type="radio" name="rs" value="max"> 最长边
+              <input type="number" id="maxSide" value="1500" style="width:80px"> px</label>
+            <label class="f"><input type="radio" name="rs" value="w"> 指定宽度
+              <input type="number" id="wSide" value="1500" style="width:80px"> px</label>
+            <label class="f"><input type="radio" name="rs" value="pct"> 按比例
+              <input type="number" id="pctSide" value="50" style="width:70px"> %</label>
+          </div>
+          <div class="row" style="margin-top:7px">
+            <label class="f"><input type="checkbox" id="noUpscale" checked> 不放大（原图更小就保持）</label>
+            <button class="btn sm" id="btnFit">按最长边 1500 生成阅读副本</button>
+            <button class="btn sm" id="btnFit2000">2000px</button>
+            <button class="btn sm" id="btnFit3000">3000px</button>
+          </div>
+        </div>
+
+        <div class="sect">
+          <div class="t">画质与增强</div>
+          <div class="row">
+            <label class="f"><input type="checkbox" id="autoLevel"> 轻度自动对比度<em style="color:var(--sub);font-style:normal;font-size:11.5px">（照片发灰时用）</em></label>
+          </div>
+        </div>
+
+        <div class="sect">
+          <div class="t">分栏<em>一张照片里有两页时，切成两张分别输出</em></div>
+          <div class="row">
+            <label class="f"><input type="radio" name="sp" value="" checked> 不分栏</label>
+            <label class="f"><input type="radio" name="sp" value="vertical"> 上下切两张</label>
+            <label class="f"><input type="radio" name="sp" value="horizontal"> 左右切两张</label>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:11px">
+          <button class="btn" id="btnSyncAll">把这套工序同步到全部选中</button>
+          <button class="btn ghost" id="btnOpsReset">清空当前工序</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="n">4</span>输出与执行</h2>
+      <div class="body">
+        <div class="split2">
+          <label class="f">输出格式
+            <select id="fmt">
+              <option value="jpg" selected>JPG（照片首选）</option>
+              <option value="png">PNG（无损 / 图线）</option>
+              <option value="webp">WebP（更小）</option>
+              <option value="tiff">TIFF（无损）</option>
+            </select>
+          </label>
+          <label class="f">画质 <input type="number" id="quality" value="92" min="40" max="100" style="width:74px">
+            <span style="color:var(--sub);font-size:11.5px">（JPG/WebP）</span></label>
+          <label class="f">文件名后缀 <input type="text" id="suffix" placeholder="例如 _可读" style="width:130px"></label>
+          <label class="f"><input type="checkbox" id="overwrite"> 允许覆盖同名文件</label>
+        </div>
+
+        <div class="sect">
+          <div class="t">保存到哪儿<em>原图永远不动</em></div>
+          <div class="row" style="gap:14px">
+            <label class="f"><input type="radio" name="om" value="jpg-folder" checked> 同级 <code id="subdirEcho">JPG</code> 子目录</label>
+            <label class="f"><input type="radio" name="om" value="same-folder"> 原文件夹（另存新名）</label>
+            <label class="f"><input type="radio" name="om" value="export"> 先导出到暂存区，再打包下载</label>
+            <label class="f"><input type="radio" name="om" value="custom"> 自定义目录</label>
+          </div>
+          <div class="row" style="margin-top:7px">
+            <label class="f">子目录名 <input type="text" id="subdir" value="JPG" style="width:110px"></label>
+            <label class="f">自定义目录 <input type="text" id="customDir" placeholder="~/Desktop/…" style="width:300px"></label>
+            <button class="btn sm" id="btnRevealLast">在访达中查看上次输出</button>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <button class="btn primary" id="btnRun">开始处理选中的 0 张</button>
+          <button class="btn" id="btnPreviewOps">先看效果（不落盘）</button>
+          <button class="btn ghost" id="btnZip" style="display:none">打包下载全部结果</button>
+        </div>
+        <div class="msg" id="msg"></div>
+        <div id="resWrap" style="display:none;margin-top:12px;max-height:340px;overflow:auto">
+          <table class="res"><thead><tr>
+            <th style="width:30px">#</th><th>来源</th><th>输出</th><th style="width:94px">尺寸</th>
+            <th style="width:74px">大小</th><th style="width:72px">状态</th>
+          </tr></thead><tbody id="resBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <details class="help">
+      <summary>怎么用？（点开看一眼就行）</summary>
+      <ul>
+        <li><strong>典型流程</strong>：左栏点进「学科 / 组名 / HEIC」→ 全选 → 选「同级 JPG 子目录」→ 开始处理。输出的 JPG 会和 <code>HEIC</code> 并排放在 <code>JPG/</code> 里，原图照旧。</li>
+        <li><strong>照片拍歪了</strong>：用「微调角度」，比如 2.5°，会自动补白底、不留黑角。</li>
+        <li><strong>一页拍不全</strong>：先用「快速切半」框好，再勾「上下切两张」，一次输出两张。</li>
+        <li><strong>只想看看效果</strong>：点「先看效果（不落盘）」，不写任何文件。</li>
+        <li>所有转换、裁切都在你本机的 Python 里算，<strong>不联网、不上传</strong>；HEIC 用的是 macOS 自带的解码能力。</li>
+        <li>缓存目录 <code>~/Library/Caches/试卷图片处理工具</code>，嫌占地方可以直接删，工具下次会自动重建。</li>
+      </ul>
+    </details>
+
+<script>
+"use strict";
+/* ============================ 状态 ============================ */
+const S = {
+  dir: null,
+  files: [],
+  sel: new Set(),
+  cur: null,
+  ops: {},              // 路径 -> {rotate,flip,rel,autolevel,split,noUpscale}
+  cropMode: false,
+  lastPaths: [],
+  lastOutdir: null,
+  busy: false,
+};
+const DEFAULT_OPS = { rotate: 0, flip: null, rel: null, autolevel: false, split: "", noUpscale: true };
+const $ = (id) => document.getElementById(id);
+const pv = $("pv"), pvwrap = $("pvwrap"), cropbox = $("cropbox");
+
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g,
+  (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const num = (el, d) => { const v = parseFloat(el.value); return isFinite(v) ? v : d; };
+const q = (p) => "/api/list?path=" + encodeURIComponent(p);
+
+function opsOf(p) {
+  if (!S.ops[p]) S.ops[p] = { ...DEFAULT_OPS };
+  return S.ops[p];
+}
+
+/* ============================ 接口 ============================ */
+async function api(url, opts) {
+  const r = await fetch(url, opts);
+  let j;
+  try { j = await r.json(); } catch (e) { throw new Error("服务返回了非 JSON 内容（HTTP " + r.status + "）"); }
+  if (!j.ok) throw new Error(j.error || "请求失败");
+  return j;
+}
+const post = (url, body) => api(url, {
+  method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+});
+
+function toast(kind, text, sticky) {
+  const el = $("msg");
+  el.className = "msg show " + kind;
+  el.innerHTML = text;
+  if (!sticky) setTimeout(() => { if (el.innerHTML === text) el.className = "msg"; }, 6000);
+}
+const spin = '<span class="spin"></span> ';
+
+/* ============================ 能力与目录 ============================ */
+async function loadCaps() {
+  const p = $("pillEngine");
+  try {
+    const c = await api("/api/caps");
+    S.caps = c;
+    const heic = c.sips.available ? " · 支持 HEIC" : " · 不支持 HEIC";
+    p.textContent = "Pillow " + (c.pillow.version || "?") + heic;
+    p.className = "pill" + (c.pillow.available ? "" : " warn");
+  } catch (e) { p.textContent = "引擎异常"; p.className = "pill warn"; }
+}
+
+async function loadRoots() {
+  try {
+    const j = await api("/api/roots");
+    $("roots").innerHTML = j.roots.map((r) =>
+      `<button class="chip" data-go="${esc(r.path)}">${esc(r.label)}</button>`).join("");
+    $("roots").querySelectorAll("button").forEach((b) =>
+      b.onclick = () => loadDir(b.dataset.go));
+  } catch (e) { /* 忽略 */ }
+}
+
+async function loadDir(path) {
+  $("filelist").innerHTML = '<div class="empty">正在载入…</div>';
+  try {
+    const j = await api(q(path));
+    S.dir = j.path;
+    S.files = j.files;
+    $("curPath").textContent = j.path;
+    // 目录按钮
+    $("dirs").innerHTML = j.dirs.length
+      ? '<span style="font-size:11.5px;color:var(--sub);align-self:center">子目录</span>' +
+        j.dirs.map((d) => `<button class="dirbtn" data-go="${esc(d.path)}">📁 ${esc(d.name)}</button>`).join("")
+      : '<span style="font-size:12px;color:var(--sub)">（没有子目录）</span>';
+    $("dirs").querySelectorAll("button").forEach((b) =>
+      b.onclick = () => loadDir(b.dataset.go));
+    if (!S.files.length) {
+      $("filelist").innerHTML = '<div class="empty">这个文件夹里没有可处理的图片。<br>点上面的「子目录」翻一翻，比如进 <code>HEIC</code>。</div>';
+    } else {
+      // 进目录默认全选、并自动预览第一张（批量处理时最省事）
+      S.sel = new Set(S.files.map((f) => f.path));
+      renderFiles();
+      selectCurrent(S.cur && S.files.some((f) => f.path === S.cur) ? S.cur : S.files[0].path);
+    }
+    updateCounters();
+  } catch (e) {
+    $("filelist").innerHTML = `<div class="empty">读不了这个目录：<br>${esc(e.message)}</div>`;
+  }
+}
+
+function renderFiles() {
+  const need = S.files.filter((f) => f.needs_convert).length;
+  const head = `<div class="filehead">
+      <span>${S.files.length} 张图片</span>
+      ${need ? `<span class="badge warn">${need} 张需转码</span>` : '<span class="badge ok">都可直接读</span>'}
+      <span style="flex:1"></span><span>勾选＝要处理</span>
+    </div>`;
+  const rows = S.files.map((f) => {
+    const ext = (f.format || f.ext.replace(".", "")).toUpperCase();
+    const needCls = f.needs_convert ? "warn" : "ok";
+    const checked = S.sel.has(f.path) ? " checked" : "";
+    const cur = S.cur === f.path ? " cur" : "";
+    return `<div class="fi${cur}" data-path="${esc(f.path)}">
+      <input type="checkbox"${checked} data-ck="1">
+      <img class="th" loading="lazy" alt="" src="/api/thumb?w=160&path=${encodeURIComponent(f.path)}">
+      <div>
+        <div class="nm">${esc(f.name)}</div>
+        <div class="mt"><span class="badge ${needCls}">${esc(ext)}</span>
+          ${f.w || "?"}×${f.h || "?"} · ${esc(f.size_h || "")}</div>
+      </div>
+    </div>`;
+  }).join("");
+  $("filelist").innerHTML = head + rows;
+  $("filelist").querySelectorAll(".fi").forEach((row) => {
+    const p = row.dataset.path;
+    row.querySelector('input[type=checkbox]').onchange = (ev) => {
+      ev.stopPropagation();
+      ev.target.checked ? S.sel.add(p) : S.sel.delete(p);
+      updateCounters();
+    };
+    row.onclick = () => { selectCurrent(p); };
+  });
+}
+
+function selectCurrent(p) {
+  S.cur = p;
+  $("filelist").querySelectorAll(".fi").forEach((r) =>
+    r.classList.toggle("cur", r.dataset.path === p));
+  const f = S.files.find((x) => x.path === p);
+  $("pvName").textContent = f ? `${f.name}　${f.w||"?"}×${f.h||"?"}` : "";
+  $("pvEmpty").style.display = "none";
+  pv.style.display = "block";
+  renderPreview();
+  syncOpsUI();
+}
+
+function updateCounters() {
+  $("pillSel").textContent = `已选 ${S.sel.size} / ${S.files.length}`;
+  const need = [...S.sel].filter((p) => (S.files.find((f) => f.path === p) || {}).needs_convert).length;
+  const el = $("pillConv");
+  el.style.display = need ? "inline-flex" : "none";
+  el.textContent = `${need} 张需转码`;
+  $("btnRun").textContent = `开始处理选中的 ${S.sel.size} 张`;
+  $("btnRun").disabled = S.sel.size === 0 || S.busy;
+}
+</script>
+<script>
+"use strict";
+/* ============================ 预览（含旋转/翻转效果） ============================ */
+let pvSeq = 0;
+async function renderPreview() {
+  if (!S.cur) return;
+  const o = opsOf(S.cur);
+  const seq = ++pvSeq;
+  try {
+    const j = await post("/api/preview-ops", {
+      path: S.cur,
+      ops: { rotate: o.rotate, flip: o.flip },
+      max: 1400,
+    });
+    if (seq !== pvSeq) return;
+    pv.onload = () => layoutCrop();
+    pv.src = j.data_url;
+    S.curSize = j.size_after;
+  } catch (e) {
+    pv.src = q(S.cur);  // 退回到服务端直出
+  }
+}
+
+/* ============================ 裁切框 ============================ */
+function parseRel(rel) {
+  if (!rel) return null;
+  const v = String(rel).split(",").map(Number);
+  if (v.length !== 4 || v.some((x) => !isFinite(x))) return null;
+  return v;
+}
+
+function layoutCrop() {
+  const o = S.cur ? opsOf(S.cur) : null;
+  const rel = o && parseRel(o.rel);
+  if (!rel || !pv.naturalWidth) {
+    cropbox.style.display = "none";
+    $("cropInfo").textContent = "裁切：无";
+    return;
+  }
+  const r = pv.getBoundingClientRect(), w = pvwrap.getBoundingClientRect();
+  const ox = r.left - w.left, oy = r.top - w.top;
+  cropbox.style.display = "block";
+  cropbox.style.left = (ox + rel[0] * r.width) + "px";
+  cropbox.style.top = (oy + rel[1] * r.height) + "px";
+  cropbox.style.width = ((rel[2] - rel[0]) * r.width) + "px";
+  cropbox.style.height = ((rel[3] - rel[1]) * r.height) + "px";
+  const px = Math.round((rel[2] - rel[0]) * pv.naturalWidth);
+  const py = Math.round((rel[3] - rel[1]) * pv.naturalHeight);
+  $("cropInfo").textContent = `裁切：${(rel[0] * 100).toFixed(1)}%, ${(rel[1] * 100).toFixed(1)}% → ` +
+    `${(rel[2] * 100).toFixed(1)}%, ${(rel[3] * 100).toFixed(1)}%（约 ${px}×${py} 像素）`;
+  $("rx0").value = rel[0].toFixed(3); $("ry0").value = rel[1].toFixed(3);
+  $("rx1").value = rel[2].toFixed(3); $("ry1").value = rel[3].toFixed(3);
+}
+
+function setRel(rel) {
+  if (!S.cur) return;
+  const o = opsOf(S.cur);
+  if (rel) {
+    const v = rel.map((x) => clamp(x, 0, 1));
+    if (v[2] - v[0] < 0.01 || v[3] - v[1] < 0.01) return;
+    o.rel = v.map((x) => x.toFixed(4)).join(",");
+  } else {
+    o.rel = null;
+  }
+  layoutCrop();
+}
+
+let drag = null;
+function relFromEvent(ev) {
+  const r = pv.getBoundingClientRect();
+  return [clamp((ev.clientX - r.left) / r.width, 0, 1),
+          clamp((ev.clientY - r.top) / r.height, 0, 1)];
+}
+
+pvwrap.addEventListener("pointerdown", (ev) => {
+  if (!S.cur || !pv.naturalWidth) return;
+  const onHandle = ev.target.classList.contains("hd");
+  const onBox = ev.target === cropbox || onHandle;
+  if (!S.cropMode && !onBox) return;
+  ev.preventDefault();
+  const r = pv.getBoundingClientRect();
+  if (onHandle) {
+    const rel = parseRel(opsOf(S.cur).rel) || [0, 0, 1, 1];
+    drag = { mode: "resize", corner: ev.target.dataset.h, rel, r };
+  } else if (onBox) {
+    const rel = parseRel(opsOf(S.cur).rel) || [0, 0, 1, 1];
+    drag = { mode: "move", rel, r, start: relFromEvent(ev) };
+  } else {
+    const p = relFromEvent(ev);
+    drag = { mode: "new", anchor: p, r };
+    setRel([p[0], p[1], p[0] + 0.01, p[1] + 0.01]);
+  }
+  pvwrap.setPointerCapture(ev.pointerId);
+});
+
+pvwrap.addEventListener("pointermove", (ev) => {
+  if (!drag) return;
+  const p = relFromEvent(ev);
+  if (drag.mode === "new") {
+    const a = drag.anchor;
+    setRel([Math.min(a[0], p[0]), Math.min(a[1], p[1]),
+            Math.max(a[0], p[0]), Math.max(a[1], p[1])]);
+  } else if (drag.mode === "move") {
+    const d = [p[0] - drag.start[0], p[1] - drag.start[1]];
+    const w = drag.rel[2] - drag.rel[0], h = drag.rel[3] - drag.rel[1];
+    const x0 = clamp(drag.rel[0] + d[0], 0, 1 - w), y0 = clamp(drag.rel[1] + d[1], 0, 1 - h);
+    setRel([x0, y0, x0 + w, y0 + h]);
+  } else {
+    const v = drag.rel.slice();
+    const c = drag.corner;
+    if (c.includes("w")) v[0] = Math.min(p[0], v[2] - 0.01);
+    if (c.includes("e")) v[2] = Math.max(p[0], v[0] + 0.01);
+    if (c.includes("n")) v[1] = Math.min(p[1], v[3] - 0.01);
+    if (c.includes("s")) v[3] = Math.max(p[1], v[1] + 0.01);
+    setRel(v);
+  }
+});
+
+["pointerup", "pointercancel"].forEach((t) =>
+  pvwrap.addEventListener(t, (ev) => {
+    if (!drag) return;
+    drag = null;
+    try { pvwrap.releasePointerCapture(ev.pointerId); } catch (e) { /* 忽略 */ }
+    if (S.cropMode) { S.cropMode = false; $("btnCropOn").textContent = "开始框选裁切"; }
+  }));
+
+window.addEventListener("resize", () => { if (pv.naturalWidth) layoutCrop(); });
+
+/* ============================ 执行 ============================ */
+function outputCfg() {
+  return {
+    mode: document.querySelector("input[name=om]:checked").value,
+    subdir: $("subdir").value.trim() || "JPG",
+    dir: $("customDir").value.trim(),
+    format: $("fmt").value,
+    quality: num($("quality"), 92),
+    suffix: $("suffix").value.trim(),
+    overwrite: $("overwrite").checked,
+  };
+}
+
+function renderResults(j) {
+  const rows = (j.results || []).map((r, i) => {
+    const ok = r.ok;
+    const out = r.path ? `<td class="p">${esc(r.path)}
+        <div style="margin-top:3px">
+          <a href="#" data-dl="${esc(r.path)}">下载</a>
+          <a href="#" data-rev="${esc(r.path)}" style="margin-left:8px">访达</a>
+        </div></td>` : "<td class='p'>—</td>";
+    const size = r.w ? `${r.w}×${r.h}` : (r.dry ? "（试算）" : "—");
+    return `<tr>
+      <td>${i + 1}</td>
+      <td>${esc(r.name || (r.src || "").split("/").pop())}</td>
+      ${out}
+      <td>${esc(size)}</td>
+      <td>${esc(r.size_h || "—")}</td>
+      <td>${ok ? '<span class="badge ok">成功</span>' : '<span class="badge warn">失败</span>'}</td>
+    </tr>${ok ? "" : `<tr><td></td><td colspan="5" style="color:var(--err);font-size:12px">${esc(r.error)}</td></tr>`}`;
+  }).join("");
+  $("resBody").innerHTML = rows || "<tr><td colspan='6'>没有结果</td></tr>";
+  $("resWrap").style.display = "block";
+  $("resBody").querySelectorAll("[data-dl]").forEach((a) =>
+    a.onclick = (e) => { e.preventDefault(); window.location.href = "/api/download?path=" + encodeURIComponent(a.dataset.dl); });
+  $("resBody").querySelectorAll("[data-rev]").forEach((a) =>
+    a.onclick = (e) => { e.preventDefault(); post("/api/reveal", { path: a.dataset.rev }).catch(() => {}); });
+}
+
+async function run(dry) {
+  if (S.busy) return;
+  const items = [...S.sel].map((p) => ({ path: p, ops: itemOps(p) }));
+  if (!items.length) { toast("err", "先在左栏勾选要处理的图片。"); return; }
+  S.busy = true;
+  $("btnRun").disabled = true;
+  $("btnRun").innerHTML = spin + (dry ? "正在试算…" : "正在处理…");
+  try {
+    const j = await post("/api/process", { items, output: outputCfg(), dry_run: !!dry });
+    renderResults(j);
+    S.lastPaths = j.paths || [];
+    S.lastOutdir = (j.outdirs || [])[0] || null;
+    if (dry) {
+      toast("info", `试算完成：<b>${j.count}</b> 张，没有写任何文件。输出目录会是 <code>${esc(S.lastOutdir || "—")}</code>`);
+    } else if (j.ok_count) {
+      toast("ok", `处理完成：成功 <b>${j.ok_count}</b> 张${j.fail_count ? "，失败 " + j.fail_count + " 张" : ""}。` +
+        (S.lastOutdir ? `输出在 <code>${esc(S.lastOutdir)}</code>` : ""));
+    } else {
+      toast("err", `没能处理成功：${esc((j.results[0] || {}).error || "未知原因")}`);
+    }
+    $("btnZip").style.display = S.lastPaths.length ? "inline-block" : "none";
+  } catch (e) {
+    toast("err", "处理失败：" + esc(e.message));
+  } finally {
+    S.busy = false;
+    $("btnRun").disabled = S.sel.size === 0;
+    $("btnRun").textContent = `开始处理选中的 ${S.sel.size} 张`;
+  }
+}
+
+async function previewFull() {
+  if (!S.cur) { toast("err", "先在左栏点一张图片。"); return; }
+  try {
+    const j = await post("/api/preview-ops", { path: S.cur, ops: itemOps(S.cur), max: 1600 });
+    showLightbox(j.data_url,
+      `效果预览（未写任何文件）　方向校正后 ${j.size_before.w}×${j.size_before.h} → ${j.size_after.w}×${j.size_after.h}　` +
+      `工序：${j.ops.join("、") || "无"}　（缩放设置不在此预览内）`);
+  } catch (e) { toast("err", esc(e.message)); }
+}
+
+function showLightbox(src, caption) {
+  let ov = $("lightbox");
+  if (!ov) {
+    ov = document.createElement("div");
+    ov.id = "lightbox";
+    ov.style.cssText = "position:fixed;inset:0;background:rgba(20,24,30,.85);z-index:99;display:flex;" +
+      "flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;cursor:zoom-out";
+    ov.innerHTML = '<img id="lbImg" alt="" style="max-width:92vw;max-height:80vh;background:#fff;border-radius:6px">' +
+      '<div id="lbCap" style="color:#fff;font-size:13px;text-align:center;max-width:82vw;line-height:1.7"></div>' +
+      '<div style="color:#c9d1d9;font-size:12px">点任意处关闭</div>';
+    ov.onclick = () => { ov.style.display = "none"; };
+    document.body.appendChild(ov);
+  }
+  $("lbImg").src = src;
+  $("lbCap").textContent = caption;
+  ov.style.display = "flex";
+}
+
+async function doZip() {
+  if (!S.lastPaths.length) { toast("err", "还没有可打包的输出。"); return; }
+  try {
+    const j = await post("/api/zip", { paths: S.lastPaths });
+    const a = document.createElement("a");
+    a.href = j.url; a.download = j.name;
+    document.body.appendChild(a); a.click(); a.remove();
+    toast("ok", `已打包 <b>${esc(j.name)}</b>（${j.size_h}），浏览器应该开始下载了。`);
+  } catch (e) { toast("err", esc(e.message)); }
+}
+
+/* ============================ 事件绑定 ============================ */
+function bindEvents() {
+  $("btnCap").onclick = () => { loadCaps(); toast("info", "已重新检测本机引擎能力。"); };
+  $("btnQuit").onclick = async () => {
+    if (!confirm("停止本地服务？界面会失效，重新双击桌面上的启动器即可再次打开。")) return;
+    try { await post("/api/quit", {}); } catch (e) { /* 正常断开 */ }
+    document.body.innerHTML = '<div style="padding:40px;font-size:15px">服务已停止，可以关掉这个页面了。</div>';
+  };
+  $("btnUp").onclick = () => {
+    const p = S.dir.replace(/\/+$/, "");
+    const up = p.slice(0, p.lastIndexOf("/")) || "/";
+    loadDir(up);
+  };
+  $("btnHome").onclick = async () => {
+    // 主目录由后端 Path.home() 给出，不硬编码任何用户名
+    try {
+      const j = await api("/api/roots");
+      if (j.roots && j.roots.length) loadDir(j.roots[0].path);
+    } catch (e) { loadDir("/"); }
+  };
+  $("btnRefresh").onclick = () => loadDir(S.dir);
+
+  const setSel = (fn) => {
+    S.sel = new Set(fn());
+    $("filelist").querySelectorAll(".fi").forEach((row) => {
+      row.querySelector("input[type=checkbox]").checked = S.sel.has(row.dataset.path);
+    });
+    updateCounters();
+  };
+  $("selAll").onclick = () => setSel(() => S.files.map((f) => f.path));
+  $("selNone").onclick = () => setSel(() => []);
+  $("selNeed").onclick = () => setSel(() => S.files.filter((f) => f.needs_convert).map((f) => f.path));
+  $("selInv").onclick = () => setSel(() => S.files.filter((f) => !S.sel.has(f.path)).map((f) => f.path));
+
+  // 一键式预设：先把表单配好，再直接开跑
+  const preset = async (cfg) => {
+    if (cfg.resize) {
+      const r = document.querySelector(`input[name=rs][value=${cfg.resize}]`);
+      if (r) r.checked = true;
+    }
+    if (cfg.max != null) $("maxSide").value = cfg.max;
+    if (cfg.mode) { const r = document.querySelector(`input[name=om][value=${cfg.mode}]`); if (r) r.checked = true; }
+    if (cfg.subdir) $("subdir").value = cfg.subdir;
+    if (cfg.clearOps) {
+      [...S.sel].forEach((p) => { S.ops[p] = { ...DEFAULT_OPS }; });
+      if (S.cur) syncOpsUI();
+    }
+    if (cfg.split != null) {
+      const r = document.querySelector(`input[name=sp][value="${cfg.split}"]`);
+      if (r) r.checked = true;
+      [...S.sel].forEach((p) => { opsOf(p).split = cfg.split; });
+    }
+    if (!S.sel.size) { toast("info", "先用左栏的「全选 / 只选需转码的」挑好图片，再点这个按钮。"); return; }
+    await run(false);
+  };
+  $("presetRead").onclick = () => preset({ resize: "max", max: 1500, mode: "export", clearOps: true });
+  $("presetJpg").onclick = () => preset({ resize: "none", mode: "jpg-folder", subdir: "JPG", clearOps: false });
+  $("presetOrient").onclick = () => preset({ resize: "none", mode: "jpg-folder", clearOps: true });
+  $("presetSplitV").onclick = () => preset({ resize: "none", mode: "jpg-folder", clearOps: false, split: "vertical" });
+
+  // 裁切
+  $("btnCropOn").onclick = () => {
+    if (!S.cur) { toast("err", "先选一张图片。"); return; }
+    S.cropMode = !S.cropMode;
+    $("btnCropOn").textContent = S.cropMode ? "框选中…（松手即完成）" : "开始框选裁切";
+    pvwrap.classList.toggle("drag", S.cropMode);
+  };
+  $("btnCropClear").onclick = () => { setRel(null); toast("info", "已清除裁切。"); };
+  document.querySelectorAll("[data-half]").forEach((b) =>
+    b.onclick = () => {
+      if (!S.cur) { toast("err", "先选一张图片。"); return; }
+      setRel(b.dataset.half.split(",").map(Number));
+    });
+  $("btnCropApply").onclick = () => {
+    if (!S.cur) { toast("err", "先选一张图片。"); return; }
+    setRel([num($("rx0"), 0), num($("ry0"), 0), num($("rx1"), 1), num($("ry1"), 1)]);
+  };
+
+  // 旋转/翻转
+  document.querySelectorAll("[data-rot]").forEach((b) =>
+    b.onclick = () => {
+      if (!S.cur) { toast("err", "先选一张图片。"); return; }
+      const o = opsOf(S.cur);
+      o.rotate = ((o.rotate + parseInt(b.dataset.rot, 10)) % 360 + 360) % 360;
+      renderPreview();
+      toast("info", `当前旋转角：${o.rotate}°`);
+    });
+  $("btnRotFine").onclick = () => {
+    if (!S.cur) { toast("err", "先选一张图片。"); return; }
+    const o = opsOf(S.cur);
+    o.rotate = ((o.rotate + num($("rotFine"), 0)) % 360 + 360) % 360;
+    renderPreview();
+    toast("info", `当前旋转角：${o.rotate}°（补白底，不会留黑角）`);
+  };
+  $("btnRotReset").onclick = () => {
+    if (!S.cur) return;
+    opsOf(S.cur).rotate = 0; $("rotFine").value = 0; renderPreview();
+  };
+  $("btnFlipH").onclick = () => {
+    if (!S.cur) return;
+    const o = opsOf(S.cur);
+    o.flip = o.flip === "horizontal" ? null : "horizontal";
+    renderPreview(); toast("info", o.flip ? "已水平翻转" : "已取消翻转");
+  };
+  $("btnFlipV").onclick = () => {
+    if (!S.cur) return;
+    const o = opsOf(S.cur);
+    o.flip = o.flip === "vertical" ? null : "vertical";
+    renderPreview(); toast("info", o.flip ? "已垂直翻转" : "已取消翻转");
+  };
+
+  // 缩放快捷
+  const fitTo = (n) => { document.querySelector('input[name=rs][value=max]').checked = true; $("maxSide").value = n; };
+  $("btnFit").onclick = () => fitTo(1500);
+  $("btnFit2000").onclick = () => fitTo(2000);
+  $("btnFit3000").onclick = () => fitTo(3000);
+
+  $("autoLevel").onchange = () => { if (S.cur) opsOf(S.cur).autolevel = $("autoLevel").checked; };
+  document.querySelectorAll('input[name=sp]').forEach((r) =>
+    r.onchange = () => { if (S.cur) opsOf(S.cur).split = r.value; });
+
+  $("btnSyncAll").onclick = () => {
+    if (!S.cur) { toast("err", "先选一张图片。"); return; }
+    const src = { ...opsOf(S.cur) };
+    const targets = S.sel.size ? [...S.sel] : S.files.map((f) => f.path);
+    targets.forEach((p) => { S.ops[p] = { ...src }; });
+    toast("ok", `已把当前工序（角度 ${src.rotate || 0}°、裁切 ${src.rel ? "有" : "无"}、分栏 ${src.split || "无"}）同步到 ${targets.length} 张。`);
+  };
+  $("btnOpsReset").onclick = () => {
+    if (!S.cur) return;
+    S.ops[S.cur] = { ...DEFAULT_OPS };
+    syncOpsUI(); renderPreview(); toast("info", "已清空这张图的工序。");
+  };
+
+  $("btnRun").onclick = () => run(false);
+  $("btnPreviewOps").onclick = previewFull;
+  $("btnZip").onclick = doZip;
+  $("btnRevealLast").onclick = () => {
+    const p = S.lastOutdir || S.lastPaths[0];
+    if (!p) { toast("err", "还没有输出过东西。"); return; }
+    post("/api/reveal", { path: p }).then(() => toast("info", "已在访达中打开：" + esc(p)))
+      .catch((e) => toast("err", esc(e.message)));
+  };
+  $("subdir").oninput = () => { $("subdirEcho").textContent = $("subdir").value.trim() || "JPG"; };
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { const ov = $("lightbox"); if (ov) ov.style.display = "none"; }
+  });
+}
+
+/* ============================ 启动 ============================ */
+(async function init() {
+  bindEvents();
+  await loadCaps();
+  await loadRoots();
+  // 支持 ?dir=/绝对路径 直接深链到某个文件夹（启动器会用到）
+  const asked = new URLSearchParams(location.search).get("dir");
+  let start = asked || null;
+  if (!start) {
+    try {
+      const j = await api("/api/roots");
+      const d = j.roots.find((r) => r.label === "桌面") || j.roots[0];
+      start = d && d.path;
+    } catch (e) { /* 忽略 */ }
+  }
+  if (start) loadDir(start);
+  else $("filelist").innerHTML = '<div class="empty">打不开起始目录，请点上面的「主目录」。</div>';
+})();
+
+function syncOpsUI() {
+  const o = S.cur ? opsOf(S.cur) : { ...DEFAULT_OPS };
+  $("rotFine").value = 0;
+  $("autoLevel").checked = !!o.autolevel;
+  document.querySelectorAll('input[name=sp]').forEach((r) => { r.checked = r.value === (o.split || ""); });
+  layoutCrop();
+}
+
+function globalOps() {
+  const rs = document.querySelector("input[name=rs]:checked").value;
+  const g = { noUpscale: $("noUpscale").checked };
+  if (rs === "max") g.max = num($("maxSide"), 1500);
+  if (rs === "w") g.w = num($("wSide"), 1500);
+  if (rs === "pct") g.pct = num($("pctSide"), 50);
+  return g;
+}
+
+function itemOps(p) {
+  const o = opsOf(p);
+  const out = {
+    rotate: o.rotate || 0,
+    flip: o.flip || null,
+    rel: o.rel || null,
+    autolevel: !!o.autolevel,
+    split: o.split || "",
+    ...globalOps(),
+  };
+  if (out.rotate === 0) delete out.rotate;
+  if (!out.flip) delete out.flip;
+  if (!out.rel) delete out.rel;
+  if (!out.split) delete out.split;
+  return out;
+}
+</script>
+  </section>
+</main>
+</body>
+</html>

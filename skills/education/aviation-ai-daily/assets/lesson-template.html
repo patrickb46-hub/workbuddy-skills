@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<!--
+  aviation-ai-daily · 课件模板
+  ------------------------------------------------------------
+  占位符（生成时逐一替换，不留花括号残留）：
+    {{DATE}}        2026-10-31
+    {{WEEKDAY}}     周五
+    {{LESSON_NO}}   01
+    {{TRACK}}       航空 · A 线   /   AI · B 线
+    {{TRACK_KEY}}   aviation / ai   （决定主题色，见 :root）
+    {{DURATION}}    约 10 分钟
+    {{TITLE}}       本课标题
+    {{SUBTITLE}}    一句话副标题（不超过 30 字，必须是人话）
+    {{TLDR}}        一句话结论
+    {{BODY}}        正文各节（见下）
+    {{KEYPOINTS}}   <li>…</li> × 3
+    {{TASK}}        一个 5–20 分钟内能做完的小任务
+    {{NEXT}}        明天预告一行
+    {{SOURCES}}     <li>…</li> 权威来源
+
+  正文单节结构（每课 3–5 节，第 1–2 节必须配一张手绘 SVG 图）：
+    <section class="sec">
+      <h2><span class="n">1</span>小标题</h2>
+      <figure class="fig">
+        <svg viewBox="0 0 640 300" role="img" aria-label="说明">…</svg>
+        <figcaption>图 1 · 图注</figcaption>
+      </figure>
+      <p>正文…</p>
+    </section>
+
+  铁律：
+   1. 只用内联 SVG，不引用任何外链图片、字体、CDN —— 断网也能看。
+   2. 每课必须有 .mistake 纠偏模块，且至少纠正 1 条真实的常见误解。
+   3. 不用"显然""众所周知"；每个结论要么给来源，要么明确写"这是简化模型"。
+   4. 不写死行高/固定高度让中文溢出（中文最多三行就要换行）。
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{DATE}} · {{TITLE}}</title>
+<style>
+  :root{
+    --bg:#fbfbfd; --card:#ffffff; --ink:#1a1d21; --sub:#5c6470; --faint:#8b939e;
+    --line:#e6e8ec; --soft:#f4f5f7;
+    --accent:#2f6fdb; --accent-soft:#eef3fd;
+    --warn:#c2410c; --warn-soft:#fdf3ee;
+    --ok:#15803d; --ok-soft:#eef8f1;
+  }
+  body[data-track="ai"]{
+    --accent:#6b4fd8; --accent-soft:#f2effc;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
+    font-size:16.5px; line-height:1.78; letter-spacing:.01em;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:44px 26px 90px}
+
+  /* ---------- 页眉 ---------- */
+  .meta{display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:13px; color:var(--faint); margin-bottom:16px}
+  .pill{background:var(--accent-soft); color:var(--accent); font-weight:600; padding:3px 10px; border-radius:99px; font-size:12px; letter-spacing:.02em}
+  .pill.ghost{background:var(--soft); color:var(--sub)}
+  h1{font-size:31px; line-height:1.32; margin:0 0 10px; letter-spacing:-.01em; font-weight:700}
+  .sub{font-size:17px; color:var(--sub); margin:0 0 26px}
+  .rule{height:3px; width:52px; background:var(--accent); border-radius:2px; margin:0 0 30px}
+
+  /* ---------- 一句话结论 ---------- */
+  .tldr{
+    background:var(--card); border:1px solid var(--line); border-left:4px solid var(--accent);
+    border-radius:10px; padding:18px 22px; margin:0 0 38px;
+  }
+  .tldr b{display:block; font-size:12px; letter-spacing:.12em; color:var(--accent); text-transform:uppercase; margin-bottom:7px}
+  .tldr p{margin:0; font-size:17px; line-height:1.7}
+
+  /* ---------- 正文 ---------- */
+  .sec{margin:0 0 40px}
+  .sec h2{
+    font-size:20px; margin:0 0 14px; font-weight:650; letter-spacing:-.005em;
+    display:flex; align-items:baseline; gap:11px;
+  }
+  .sec h2 .n{
+    flex:none; font-size:12px; font-weight:700; color:#fff; background:var(--accent);
+    width:23px; height:23px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center;
+    transform:translateY(-2px); font-variant-numeric:tabular-nums;
+  }
+  .sec p{margin:0 0 14px; color:#26292e}
+  .sec p:last-child{margin-bottom:0}
+  .sec p.small{font-size:14.5px; color:var(--sub); background:var(--soft); border-radius:8px; padding:12px 14px; line-height:1.7}
+  .sec strong{font-weight:650}
+  mark{background:var(--accent-soft); color:inherit; padding:1px 3px; border-radius:3px}
+
+  figure.fig{margin:20px 0 22px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 16px 10px}
+  figure.fig svg{display:block; width:100%; height:auto}
+  figure.fig figcaption{font-size:12.5px; color:var(--faint); margin-top:10px; text-align:center; line-height:1.6}
+
+  /* ---------- 纠偏 ---------- */
+  .mistake{background:var(--warn-soft); border:1px solid #f3d9cb; border-radius:10px; padding:20px 22px; margin:0 0 40px}
+  .mistake h3{margin:0 0 4px; font-size:16px; color:var(--warn); display:flex; align-items:center; gap:8px}
+  .mistake .lead{font-size:13px; color:#9a6448; margin:0 0 16px}
+  .mis{padding:13px 0; border-top:1px dashed #eed6c7}
+  .mis:first-of-type{border-top:0; padding-top:4px}
+  .mis .wrong{font-size:15.5px; font-weight:600; color:#8a3d16; margin:0 0 5px}
+  .mis .wrong::before{content:"✗ "; font-weight:700}
+  .mis .why{font-size:14.5px; color:#6b5348; margin:0 0 5px}
+  .mis .right{font-size:15px; color:#23402c; background:#fff; border-radius:7px; padding:8px 11px; margin:0}
+  .mis .right::before{content:"✓ "; color:var(--ok); font-weight:700}
+
+  /* ---------- 三条记忆点 ---------- */
+  .keypoints{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:20px 22px; margin:0 0 34px}
+  .keypoints h3{margin:0 0 12px; font-size:13px; letter-spacing:.1em; color:var(--faint); text-transform:uppercase; font-weight:600}
+  .keypoints ol{margin:0; padding-left:0; list-style:none; counter-reset:k}
+  .keypoints li{counter-increment:k; position:relative; padding-left:34px; margin:0 0 11px; font-size:16px; line-height:1.66}
+  .keypoints li:last-child{margin-bottom:0}
+  .keypoints li::before{
+    content:counter(k); position:absolute; left:0; top:2px; width:23px; height:23px; border-radius:50%;
+    background:var(--accent-soft); color:var(--accent); font-size:12.5px; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  /* ---------- 任务 ---------- */
+  .task{background:var(--ok-soft); border:1px solid #d3e9db; border-radius:10px; padding:18px 22px; margin:0 0 34px}
+  .task h3{margin:0 0 8px; font-size:15px; color:var(--ok); display:flex; align-items:center; gap:8px}
+  .task p{margin:0 0 10px; font-size:15.5px; color:#25402f}
+  .task p:last-child{margin-bottom:0}
+  details{margin-top:10px; border-top:1px dashed #cfe3d6; padding-top:10px}
+  details summary{cursor:pointer; font-size:14.5px; color:var(--ok); font-weight:600; list-style:none}
+  details summary::-webkit-details-marker{display:none}
+  details summary::before{content:"▸"; margin-right:7px; display:inline-block; transition:transform .15s}
+  details[open] summary::before{transform:rotate(90deg)}
+  details .ans{font-size:15px; color:#33503c; margin-top:8px}
+
+  /* ---------- 页脚 ---------- */
+  .next{display:flex; gap:12px; align-items:baseline; border-top:1px solid var(--line); padding-top:18px; margin:0 0 30px; font-size:14.5px; color:var(--sub)}
+  .next b{color:var(--accent); font-size:12px; letter-spacing:.1em; flex:none}
+  .sources{font-size:13px; color:var(--faint); line-height:1.8}
+  .sources h4{font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); margin:0 0 8px; font-weight:600}
+  .sources ul{margin:0; padding-left:18px}
+  .sources a{color:var(--sub); text-decoration:none; border-bottom:1px solid var(--line)}
+  .foot{margin-top:38px; font-size:12px; color:#b3b9c2; text-align:center}
+
+  @media (max-width:560px){
+    body{font-size:16px}
+    .wrap{padding:30px 18px 70px}
+    h1{font-size:25px}
+    .sub{font-size:15.5px}
+  }
+  @media print{
+    body{background:#fff}
+    .wrap{max-width:none; padding:0}
+    .task details{display:none}
+  }
+</style>
+</head>
+<body data-track="{{TRACK_KEY}}">
+<div class="wrap">
+
+  <div class="meta">
+    <span class="pill">{{TRACK}}</span>
+    <span>第 {{LESSON_NO}} 课</span>
+    <span>·</span>
+    <span>{{DATE}} {{WEEKDAY}}</span>
+    <span>·</span>
+    <span>{{DURATION}}</span>
+  </div>
+
+  <h1>{{TITLE}}</h1>
+  <p class="sub">{{SUBTITLE}}</p>
+  <div class="rule"></div>
+
+  <div class="tldr">
+    <b>一句话结论</b>
+    <p>{{TLDR}}</p>
+  </div>
+
+  {{BODY}}
+
+  <div class="mistake">
+    <h3>常见错误认知</h3>
+    <p class="lead">零基础最容易先接住的错说法，逐个拆掉。</p>
+    <div class="mis">
+      <p class="wrong">{{MISCONCEPTION}}</p>
+      <p class="why">{{WHY_WRONG}}</p>
+      <p class="right">{{CORRECT}}</p>
+    </div>
+  </div>
+
+  <div class="keypoints">
+    <h3>只记这三条</h3>
+    <ol>{{KEYPOINTS}}</ol>
+  </div>
+
+  <div class="task">
+    <h3>动手 10 分钟</h3>
+    <p>{{TASK}}</p>
+    <details>
+      <summary>卡住了？点开看提示</summary>
+      <div class="ans">{{TASK_HINT}}</div>
+    </details>
+  </div>
+
+  <div class="next"><b>明天</b><span>{{NEXT}}</span></div>
+
+  <div class="sources">
+    <h4>来源与延伸</h4>
+    <ul>{{SOURCES}}</ul>
+  </div>
+
+  <p class="foot">aviation-ai-daily · 为蓝天铺路</p>
+</div>
+</body>
+</html>
