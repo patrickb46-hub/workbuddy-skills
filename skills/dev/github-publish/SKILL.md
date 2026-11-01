@@ -97,14 +97,49 @@ gh api repos/<login>/<repo>/contents | head         # 确认文件清单
 
 确认：文件数对得上、没有意外目录、README 正常渲染。
 
-## 二、收尾必须交代
+## 二、git 传输不可达时的绕行（API 推送）
+
+`gh repo create` 建仓成功、`git push` 却推不上去，典型症状是 **`github.com` 主站不通，但 `api.github.com` 通**。先确诊，别急着反复重试：
+
+```bash
+curl -s -o /dev/null -w "github.com  HTTP %{http_code}\n" --max-time 8 https://github.com
+curl -s -o /dev/null -w "api         HTTP %{http_code}\n" --max-time 8 https://api.github.com
+env -u HTTP_PROXY -u HTTPS_PROXY -u http_proxy -u https_proxy \
+  curl -s -o /dev/null -w "直连        HTTP %{http_code}\n" --max-time 8 https://github.com
+```
+
+判据：`github.com` 返回 `000` / `502` / 报 `CONNECT tunnel failed`，同时 `api` 返回 `200` → 走下面的方案。这种情况换端口、关代理都没用，线路本身不通，等也不会自己好。
+
+```bash
+python3 <skill>/scripts/api_push.py --repo <owner/name> --dir <项目根> \
+        -m "<一句话说清这次提交>"
+
+# 先看一眼会传哪些文件，不实际提交
+python3 <skill>/scripts/api_push.py --repo <owner/name> --dir . --dry-run
+```
+
+脚本流程：探测分支是否存在 → 空仓库先用 Contents API 建初始提交 → 逐个上传 blob（base64 走 stdin，避免命令行参数超长）→ 建 tree 与 commit → 强制推进 ref。
+
+**三个必须知道的点**：
+
+1. **这是全量快照**：远端有、本地没有的文件会被删掉。跑之前确认该目录就是你要的最终状态。
+2. **空仓库返回 409 `Git Repository is empty.`**：GitHub 不允许在空仓库直接建 blob，必须先 PUT 一个文件建立初始提交。脚本已处理，手工操作容易踩。
+3. **hash 对不上是正常的**：远端 commit 由 API 生成，和本地那个不是同一个对象。内容一致就够用，等网络恢复后再对齐：
+   ```bash
+   git fetch origin && git reset --hard origin/main
+   ```
+
+推完仍要按第 8 步校验远端，并额外抽检几处脱敏点——API 推送绕过了本地 `git status` 那道肉眼检查，多一双眼睛更稳。
+
+## 三、收尾必须交代
 
 - 仓库 URL
 - 提交摘要（几个文件、什么内容）
 - 体检结论：扫了多少文件、命中什么、怎么处理的、哪些是经用户确认的忽略项
 - 若做了取舍（比如把工具脚本挪进 `dev/`），说明原因
+- 若用了 API 推送，说明本地与远端 commit hash 不一致，以及怎么对齐
 
-## 三、常见坑
+## 四、常见坑
 
 | 现象 | 原因 / 处理 |
 | --- | --- |
@@ -115,3 +150,6 @@ gh api repos/<login>/<repo>/contents | head         # 确认文件清单
 | `.workbuddy/` 被提交 | `.gitignore` 漏了，`git rm -r --cached .workbuddy` 后重提交 |
 | 文件太大被拒 | GitHub 单文件 100MB 上限，先剔除或改用 Git LFS |
 | 已有 `.git` 且 remote 指向别处 | 先 `git remote -v` 看清楚，别把项目推到别人的仓库 |
+| `git push` 报 `CONNECT tunnel failed` / `Empty reply from server` | `github.com` 主站不通但 `api.github.com` 通，改用 `scripts/api_push.py`（见第二节）。换端口、关代理都无效 |
+| API 建 blob 报 `409 Git Repository is empty.` | 空仓库不能直接建 blob，先 PUT 一个文件建初始提交；`api_push.py` 已自动处理 |
+| `GIT_DEFAULT` 推送后本地 `git status` 显示 diverged | API 推送生成的 commit 与本地不同源，内容一致；`git fetch && git reset --hard origin/main` 对齐 |
