@@ -1,4 +1,4 @@
-# WorkBuddy Skills
+# String255 Private Skills
 
 一组为 [WorkBuddy](https://www.workbuddy.cn) / Claude Skills 生态编写的本地技能（Skill）。每个技能是一个独立目录，含 `SKILL.md`（元数据 + 操作手册）和可选的 `scripts/`、`references/`、`assets/`。
 
