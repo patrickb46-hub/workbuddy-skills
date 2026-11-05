@@ -1,6 +1,6 @@
 # String255 Private Skills
 
-一组为 [WorkBuddy](https://www.workbuddy.cn) / Claude Skills 生态编写的本地技能（Skill）。每个技能是一个独立目录，含 `SKILL.md`（元数据 + 操作手册）和可选的 `scripts/`、`references/`、`assets/`。
+一组为 dsh（deepseek harness），兼容链路引导至其他agent或harness架构 / Claude Skills 生态编写的本地技能（Skill）。每个技能是一个独立目录，含 `SKILL.md`（元数据 + 操作手册）和可选的 `scripts/`、`references/`、`assets/`。
 
 这些技能都在真实任务中跑过、修过、稳定下来了——不是 demo，是日常在用的工具。它们覆盖三件事：**把内容做出来**（视频、课件、演讲稿）、**把机器管好**（磁盘、日历、安装包、照片）、**把交付验住**（发布前体检、界面稳定性、无头验证）。
 
