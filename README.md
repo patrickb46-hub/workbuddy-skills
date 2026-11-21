@@ -10,6 +10,10 @@
 
 22 秒，无旁白只有配乐。点封面看片。
 
+[![试卷全解宣传片](docs/promo-exam-cover.png)](docs/promo-exam.mp4)
+
+30 秒，讲的是 `exam-paper-solutions`：错题为什么错、每一步的依据在哪。
+
 ## 目录结构
 
 ```
