@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<style>
+  :root{--bg:#07080B; --ink:#F2F5F9; --dim:#8792A6; --cyan:#35E0D0; --blue:#2F6BFF; --amber:#FFB020; --violet:#A78BFA}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC",sans-serif;
+    -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;color:var(--ink)}
+  .scene{position:absolute;inset:0;display:none}
+  .mono{font-family:"SF Mono",ui-monospace,Menlo,monospace;font-weight:500;letter-spacing:.12em;text-transform:uppercase}
+  #grid{position:absolute;inset:0;background-image:
+    linear-gradient(#1A2130 1px,transparent 1px),linear-gradient(90deg,#1A2130 1px,transparent 1px);
+    background-size:120px 120px;opacity:.35}
+  #vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%, transparent 28%, #000 120%);opacity:.92}
+  #grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay;
+    background-image:repeating-linear-gradient(0deg,#fff 0 1px,transparent 1px 3px)}
+  #flash{position:absolute;inset:0;background:#fff;opacity:0}
+  .k{font-size:20px;color:#5A6478;letter-spacing:.3em}
+</style>
+</head>
+<body>
+<div id="grid"></div><div id="vig"></div>
+
+<!-- S1 数字 -->
+<div class="scene" id="s1">
+  <div style="position:absolute;left:150px;top:200px" class="mono k">SKILLS / 2026</div>
+  <div style="position:absolute;left:150px;top:280px;display:flex;align-items:flex-end;gap:40px">
+    <div id="s1n" style="font-size:420px;font-weight:850;letter-spacing:-.06em;line-height:.86;color:#fff">00</div>
+    <div id="s1u" style="font-size:82px;font-weight:700;color:var(--cyan);padding-bottom:56px;letter-spacing:-.02em">个技能</div>
+  </div>
+  <div id="s1d" style="position:absolute;left:156px;bottom:230px;font-size:36px;color:var(--dim)">视频 · macOS · 开发验证 · 学习场景</div>
+  <div id="s1line" style="position:absolute;left:150px;bottom:180px;height:2px;width:0;background:#2A3242"></div>
+</div>
+
+<!-- S2 不是 demo -->
+<div class="scene" id="s2" style="background:var(--cyan)">
+  <div style="position:absolute;left:150px;top:352px">
+    <div id="s2a" style="font-size:120px;font-weight:850;letter-spacing:-.04em;line-height:1.1;color:#04211F">不是 demo</div>
+    <div id="s2b" style="font-size:120px;font-weight:850;letter-spacing:-.04em;line-height:1.1;color:#04211F">是每天在用的工具</div>
+  </div>
+  <div id="s2c" class="mono" style="position:absolute;left:156px;bottom:180px;font-size:22px;color:#0A3A37">USED IN REAL TASKS, NOT SAMPLES</div>
+</div>
+
+<!-- S3 技能名瀑布 -->
+<div class="scene" id="s3">
+  <div class="mono k" style="position:absolute;left:150px;top:150px">CATALOG / 24</div>
+  <div id="s3grid" style="position:absolute;left:150px;top:250px;width:1620px;display:flex;flex-wrap:wrap;gap:18px 18px"></div>
+  <div id="s3foot" class="mono" style="position:absolute;left:150px;bottom:120px;font-size:20px;color:#4A5468">EACH = SKILL.MD + SCRIPTS + REFERENCES</div>
+</div>
+
+<!-- S4 三类能力 -->
+<div class="scene" id="s4">
+  <div id="s4bg" style="position:absolute;inset:0"></div>
+  <div id="s4n" class="mono" style="position:absolute;left:150px;top:196px;font-size:22px"></div>
+  <div id="s4t" style="position:absolute;left:150px;top:300px;font-size:148px;font-weight:850;letter-spacing:-.05em;line-height:1"></div>
+  <div id="s4items" style="position:absolute;left:156px;top:712px;display:flex;gap:16px"></div>
+  <div id="s4bar" style="position:absolute;left:0;bottom:0;height:8px;width:0"></div>
+</div>
+
+<!-- S5 隐私门禁 -->
+<div class="scene" id="s5">
+  <div style="position:absolute;left:150px;top:180px;width:760px">
+    <div class="mono" style="font-size:19px;color:var(--cyan)">GATE / PRIVACY</div>
+    <div id="s5t" style="margin-top:24px;font-size:86px;font-weight:820;letter-spacing:-.035em;line-height:1.08">推之前<br>先过体检</div>
+    <div id="s5s" style="margin-top:30px;font-size:29px;color:var(--dim);line-height:1.6">密钥 · 实名 · 绝对路径<br>三项不为 0 就不许推</div>
+  </div>
+  <div style="position:absolute;right:120px;top:296px;width:880px;height:450px;border:1px solid #232C3D;border-radius:18px;
+       background:#0B0E14;box-shadow:0 30px 90px #000A;overflow:hidden">
+    <div style="display:flex;gap:9px;padding:20px 24px;border-bottom:1px solid #1A2130">
+      <span style="width:13px;height:13px;border-radius:50%;background:#3A4356"></span>
+      <span style="width:13px;height:13px;border-radius:50%;background:#3A4356"></span>
+      <span style="width:13px;height:13px;border-radius:50%;background:#3A4356"></span>
+    </div>
+    <div id="s5term" class="mono" style="padding:34px 34px;font-size:25px;line-height:2.05;letter-spacing:.02em;text-transform:none"></div>
+  </div>
+</div>
+
+<!-- S6 目录树 -->
+<div class="scene" id="s6">
+  <div style="position:absolute;left:150px;top:210px">
+    <div class="mono" style="font-size:19px;color:#4A5468">LAYOUT</div>
+    <div id="s6tree" class="mono" style="margin-top:34px;font-size:52px;line-height:1.62;letter-spacing:.02em;text-transform:none"></div>
+  </div>
+</div>
+
+<!-- S7 结尾 -->
+<div class="scene" id="s7">
+  <div id="s7glow" style="position:absolute;left:50%;top:50%;width:1500px;height:800px;transform:translate(-50%,-50%);
+       background:radial-gradient(ellipse,#35E0D028,transparent 66%)"></div>
+  <div style="position:absolute;left:150px;top:330px;width:1620px">
+    <div id="s7t" style="font-size:150px;font-weight:850;letter-spacing:-.05em;line-height:1.04">24 个技能<br>全部公开</div>
+    <div id="s7cmd" style="display:inline-block;margin-top:54px;padding:26px 34px;border:1px solid #2A3444;border-radius:14px;
+         background:#0E1218;font-size:25px;color:#C6D1E2;font-family:'SF Mono',ui-monospace,Menlo,monospace">git clone github.com/patrickb46-hub/workbuddy-skills</div>
+    <div id="s7m" style="margin-top:30px;font-size:25px;color:#7D879B">MIT ｜ 拷目录就能用 ｜ 不需要装依赖也能被读懂</div>
+  </div>
+</div>
+
+<div id="flash"></div><div id="grain"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const cl = (v,a=0,b=1) => Math.min(b, Math.max(a, v));
+const P = (t,t0,t1) => cl((t-t0)/(t1-t0));
+const E = {outExpo:t=>t>=1?1:1-Math.pow(2,-9*t), outQuint:t=>1-Math.pow(1-t,5),
+  outBack:t=>{const c=2.2;return 1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2)},
+  inOut:t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2};
+const go=(el,on)=>{el.style.display=on?'block':'none'};
+
+const SKILLS = [
+  ['bilibili-explainer','#2F6BFF'],['bilibili-studio','#2F6BFF'],['bilibili-video-study','#2F6BFF'],
+  ['ai-video-style-lab','#2F6BFF'],['video-edit','#2F6BFF'],['tts-explainer-video','#2F6BFF'],
+  ['zero-cost-video','#2F6BFF'],
+  ['disk-audit','#A78BFA'],['imessage-photo-archive','#A78BFA'],['local-toolbox','#A78BFA'],
+  ['macos-calendar-via-terminal','#A78BFA'],['pdf-to-a4-landscape','#A78BFA'],
+  ['workbuddy-credit-report','#A78BFA'],['workbuddy-checkin-daemon','#A78BFA'],
+  ['macos-app-security-triage','#A78BFA'],
+  ['github-publish','#35E0D0'],['single-file-html-verify','#35E0D0'],['canvas-render-stability','#35E0D0'],
+  ['web-access','#35E0D0'],['graphify','#35E0D0'],
+  ['exam-paper-solutions','#FFB020'],['classin-lesson-digest','#FFB020'],
+  ['bilingual-speech-deck','#FFB020'],['aviation-ai-daily','#FFB020']
+];
+
+function renderAt(t){
+  $('flash').style.opacity = 0;
+
+  /* S1 0 – 3.0 */
+  go($('s1'), t < 3.0);
+  if (t < 3.0){
+    const k = Math.round(E.outQuint(cl(t/1.5))*24);
+    $('s1n').textContent = String(k).padStart(2,'0');
+    $('s1n').style.transform = `scale(${1+0.06*(1-cl(t/1.5))})`;
+    $('s1u').style.opacity = E.outQuint(P(t,1.35,1.85));
+    $('s1d').style.opacity = E.outQuint(P(t,1.6,2.2));
+    $('s1line').style.width = (E.outQuint(P(t,1.9,2.6))*1620)+'px';
+  }
+
+  /* S2 青色 3.0 – 5.1 */
+  go($('s2'), t >= 3.0 && t < 5.1);
+  if (t >= 3.0 && t < 5.1){
+    const a = E.outExpo(P(t,3.06,3.55)), b2 = E.outExpo(P(t,3.30,3.85));
+    $('s2a').style.opacity = a; $('s2a').style.transform = `translateY(${(1-a)*44}px)`;
+    $('s2b').style.opacity = b2; $('s2b').style.transform = `translateY(${(1-b2)*44}px)`;
+    $('s2c').style.opacity = E.outQuint(P(t,3.9,4.5));
+    if (t<3.10) $('flash').style.opacity = 0.7*(1-P(t,3.0,3.10));
+  }
+
+  /* S3 技能名 5.1 – 9.0 */
+  go($('s3'), t >= 5.1 && t < 9.0);
+  if (t >= 5.1 && t < 9.0){
+    if ($('s3grid').children.length !== SKILLS.length){
+      $('s3grid').innerHTML = SKILLS.map(([n,c])=>
+        `<span class="mono" style="padding:16px 22px;border:1px solid #232C3D;border-radius:12px;font-size:27px;
+          color:#C6D1E2;letter-spacing:.02em;text-transform:none;background:#0C1016">
+          <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${c};margin-right:13px;vertical-align:middle"></span>${n}</span>`
+      ).join('');
+    }
+    [...$('s3grid').children].forEach((el,i)=>{
+      const s0 = 5.18 + i*0.085;
+      const s = E.outBack(cl((t-s0)/0.32));
+      el.style.opacity = cl(s*1.2);
+      el.style.transform = `translateY(${(1-s)*46}px) scale(${0.86+0.14*s})`;
+    });
+    $('s3foot').style.opacity = E.outQuint(P(t,7.9,8.5));
+    if (t<5.18) $('flash').style.opacity = 0.55*(1-P(t,5.1,5.18));
+  }
+
+  /* S4 三类 9.0 – 13.3 */
+  go($('s4'), t >= 9.0 && t < 13.3);
+  if (t >= 9.0 && t < 13.3){
+    const cards = [
+      {n:'01 / MAKE', t:'把内容<br>做出来', bg:'#2F6BFF', fg:'#fff', items:['视频','课件','演讲稿'], dot:'#0B1E4D'},
+      {n:'02 / MANAGE', t:'把机器<br>管好', bg:'#0E1118', fg:'#fff', items:['磁盘','日历','照片','用量'], dot:'#232C3D'},
+      {n:'03 / PROVE', t:'把交付<br>验住', bg:'#35E0D0', fg:'#04211F', items:['隐私体检','界面稳定','无头验证'], dot:'#0A3A37'}
+    ];
+    const step = (13.3-9.0)/3;
+    const i = Math.min(2, Math.floor((t-9.0)/step));
+    const c = cards[i];
+    const lt = (t-9.0) - i*step;
+    const inp = E.outExpo(cl(lt/0.20));
+    $('s4bg').style.background = c.bg;
+    $('s4n').textContent = c.n; $('s4n').style.color = c.fg; $('s4n').style.opacity = .72;
+    $('s4t').innerHTML = c.t; $('s4t').style.color = c.fg;
+    $('s4t').style.opacity = inp;
+    $('s4t').style.transform = `translateX(${(1-inp)*80}px)`;
+    if ($('s4items').dataset.i !== String(i)){
+      $('s4items').innerHTML = c.items.map(n=>
+        `<span style="padding:14px 24px;border:1px solid ${c.fg}77;border-radius:999px;font-size:27px;color:${c.fg}">${n}</span>`).join('');
+      $('s4items').dataset.i = String(i);
+    }
+    [...$('s4items').children].forEach((el,j)=>{
+      const s = E.outBack(cl((lt-0.12-j*0.07)/0.3));
+      el.style.opacity = cl(s); el.style.transform = `translateY(${(1-s)*20}px)`;
+    });
+    $('s4bar').style.width = (cl(lt/step)*1920)+'px';
+    $('s4bar').style.background = c.fg+'55';
+    if (lt<0.034) $('flash').style.opacity = 0.3*(1-lt/0.034);
+  }
+
+  /* S5 隐私门禁 13.3 – 17.2 */
+  go($('s5'), t >= 13.3 && t < 17.2);
+  if (t >= 13.3 && t < 17.2){
+    const q = E.outQuint(P(t,13.4,14.0));
+    $('s5t').style.opacity = q; $('s5t').style.transform = `translateY(${(1-q)*26}px)`;
+    $('s5s').style.opacity = E.outQuint(P(t,13.8,14.4));
+    const lines = [
+      {txt:'$ scan_secrets.py .', col:'#7C8798', d:13.9},
+      {txt:'扫描 149 个文件', col:'#8A93A6', d:14.25},
+      {txt:'✓ 密钥        0 项', col:'#35E0D0', d:14.7},
+      {txt:'✓ 实名        0 项', col:'#35E0D0', d:15.05},
+      {txt:'✓ 绝对路径    0 项', col:'#35E0D0', d:15.4},
+      {txt:'→ CRIT 0 / HIGH 0   可以推', col:'#FFFFFF', d:15.85}
+    ];
+    $('s5term').innerHTML = lines.map(l=>{
+      const s = E.outQuint(P(t,l.d,l.d+0.26));
+      return `<div style="opacity:${cl(s)};color:${l.col};transform:translateX(${(1-s)*-14}px)">${l.txt}</div>`;
+    }).join('');
+  }
+
+  /* S6 目录树 17.2 – 19.1 */
+  go($('s6'), t >= 17.2 && t < 19.1);
+  if (t >= 17.2 && t < 19.1){
+    const rows = [
+      ['skills/','#5A6478',0],
+      ['├── video/          7','#2F6BFF',0.16],
+      ['├── macos/          8','#A78BFA',0.32],
+      ['├── dev/            5','#35E0D0',0.48],
+      ['└── education/      4','#FFB020',0.64]
+    ];
+    $('s6tree').innerHTML = rows.map(([txt,col,d])=>{
+      const s = E.outExpo(P(t,17.3+d,17.62+d));
+      return `<div style="opacity:${s};color:${col};transform:translateX(${(1-s)*-30}px)">${txt}</div>`;
+    }).join('');
+    if (t<17.28) $('flash').style.opacity = 0.4*(1-P(t,17.2,17.28));
+  }
+
+  /* S7 结尾 19.1 – 22 */
+  go($('s7'), t >= 19.1);
+  if (t >= 19.1){
+    const p = E.outExpo(P(t,19.16,19.9));
+    $('s7t').style.opacity = p; $('s7t').style.transform = `translateY(${(1-p)*40}px)`;
+    const q = E.outQuint(P(t,19.5,20.1));
+    $('s7cmd').style.opacity = q; $('s7cmd').style.transform = `translateY(${(1-q)*22}px)`;
+    $('s7m').style.opacity = E.outQuint(P(t,19.8,20.4));
+    $('s7glow').style.opacity = 0.62+0.38*Math.sin(t*1.6);
+    if (t<19.2) $('flash').style.opacity = 0.3*(1-P(t,19.1,19.2));
+  }
+
+  $('grain').style.opacity = 0.05;
+}
+window.renderAt = renderAt;
+</script>
+</body>
+</html>

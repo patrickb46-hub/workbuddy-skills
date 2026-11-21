@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1920px;height:1080px;overflow:hidden;background:#07080C;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC",sans-serif;
+    -webkit-font-smoothing:antialiased;color:#fff;
+    --pad:116px; --title:132px; --sub:40px; --badge:26px; --kicker:24px}
+  body[data-ratio="43"]{width:1440px;height:1080px;
+    --pad:92px; --title:104px; --sub:31px; --badge:23px; --kicker:21px}
+  #glow{position:absolute;width:1500px;height:1100px;left:-260px;top:-320px;filter:blur(10px)}
+  #glow2{position:absolute;width:1200px;height:900px;right:-360px;bottom:-380px;filter:blur(20px)}
+  #grid{position:absolute;inset:0;
+    background-image:radial-gradient(circle at 1px 1px,#222A3A 1px,transparent 0);background-size:46px 46px;opacity:.45}
+  #vig{position:absolute;inset:0;background:radial-gradient(ellipse at 46% 42%,transparent 24%,#000 108%);opacity:.9}
+  .mono{font-family:"SF Mono",ui-monospace,Menlo,monospace;letter-spacing:.2em;text-transform:uppercase}
+  #kicker{position:absolute;left:var(--pad);top:100px;font-size:var(--kicker);color:#7E88A0}
+  #title{position:absolute;left:calc(var(--pad) - 4px);top:242px;width:1400px;
+    font-size:var(--title);font-weight:850;letter-spacing:-.045em;line-height:1.1}
+  #bar{position:absolute;left:calc(var(--pad) + 2px);height:8px;width:210px;border-radius:4px}
+  #sub{position:absolute;left:calc(var(--pad) + 6px);font-size:var(--sub);color:#AEB7CA;font-weight:500}
+  #badges{position:absolute;left:calc(var(--pad) + 6px);bottom:118px;display:flex;gap:13px}
+  .b{padding:13px 22px;border:1px solid #2C3446;border-radius:999px;font-size:var(--badge);color:#C9D2E3;background:#0E1219}
+  #shot{position:absolute;opacity:.98;border:1px solid #2C3446;border-radius:18px;box-shadow:0 40px 120px #000C;display:none}
+  #chips{position:absolute;display:flex;flex-wrap:wrap;gap:12px}
+  #chips span{font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:23px;color:#8FA0BC;
+    padding:10px 17px;border:1px solid #232B3B;border-radius:10px;background:#0B0F16}
+
+  /* ---- 16:9 ---- */
+  body[data-ratio="169"] #bar{top:558px}
+  body[data-ratio="169"] #sub{top:620px}
+  body[data-ratio="169"] #shot{right:92px;top:250px;width:600px}
+  body[data-ratio="169"] #chips{right:120px;top:230px;width:440px;flex-direction:column}
+
+  /* ---- 4:3：标题在上，视觉横条在下 ---- */
+  body[data-ratio="43"] #title{top:206px}
+  body[data-ratio="43"] #bar{top:486px}
+  body[data-ratio="43"] #sub{top:534px}
+  body[data-ratio="43"] #shot{left:var(--pad);top:620px;width:1256px;border-radius:14px}
+  body[data-ratio="43"] #chips{left:var(--pad);top:620px;width:1256px;flex-direction:row}
+  body[data-ratio="43"] #chips span{font-size:21px;padding:9px 15px}
+</style>
+</head>
+<body>
+<div id="grid"></div>
+<div id="glow"></div>
+<div id="glow2"></div>
+<div id="vig"></div>
+<div id="kicker" class="mono"></div>
+<div id="title"></div>
+<div id="bar"></div>
+<div id="sub"></div>
+<div id="badges"></div>
+<img id="shot" src="">
+<div id="chips"></div>
+<script>
+const q = new URLSearchParams(location.search);
+document.body.dataset.ratio = q.get('ratio') || '169';
+const accent = q.get('accent') || '#2F6BFF';
+document.getElementById('glow').style.background =
+  `radial-gradient(ellipse at 30% 30%, ${accent}55, transparent 62%)`;
+document.getElementById('glow2').style.background =
+  `radial-gradient(ellipse at 70% 70%, ${accent}33, transparent 60%)`;
+document.getElementById('kicker').textContent = q.get('kicker') || '';
+document.getElementById('title').innerHTML = (q.get('title') || '').replace(/\n/g, '<br>');
+document.getElementById('sub').textContent = q.get('sub') || '';
+document.getElementById('bar').style.background = accent;
+const shot = q.get('shot');
+const img = document.getElementById('shot');
+if (shot) { img.src = shot; img.style.display = 'block'; }
+const chips = (q.get('chips') || '').split('|').filter(Boolean);
+document.getElementById('chips').innerHTML = chips.map(c => `<span>${c}</span>`).join('');
+const badges = (q.get('badges') || '').split('|').filter(Boolean);
+document.getElementById('badges').innerHTML = badges.map(b =>
+  `<span class="b"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${accent};margin-right:12px;vertical-align:middle"></span>${b}</span>`
+).join('');
+</script>
+</body>
+</html>

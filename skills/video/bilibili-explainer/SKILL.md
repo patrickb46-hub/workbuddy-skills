@@ -319,9 +319,16 @@ python3 scripts/render_motion.py promo.html out/promo.mp4 26 --audio out/audio/b
 python3 scripts/render_motion.py promo.html /tmp/x.mp4 1 --stills 2.5,8.3,12.6
 ```
 
+**风格与样例（先读这个再动手）**：`references/promo-style-dark-kinetic.md` 是定稿的视觉与听觉规则
+（配色、字体、纹理三件套、节奏表、动效词表、配乐配方），`assets/promo-examples/` 里有三条可直接改的
+成品时间轴（agentbar / skills / dsh）和参数化封面 `cover-kit.html`。配乐池里的
+`uplift-C / bright-G / pulse-D` 就是这三条的曲子，可以直接复用。
+
 **为什么这么写**：`renderAt(t)` 是纯函数，同一帧永远画同一个样子，所以可以并行、
 可以重渲任意片段、也不会有 CSS 动画掉帧问题。实测 1920×1080 JPEG 截屏 0.066s/帧，
-26 秒片子约 55 秒渲完。
+28 秒片子约 80 秒渲完。并行渲染时每帧目录用 `tempfile.mkdtemp()` 隔离，别共用一个 `frames/`。
+
+**快切段每段不短于 1.2 秒**——实测 0.95 秒一段时用户明确反馈「跳得太快」，改成 1.33 秒才舒服。
 
 **时间轴配方（3 分钟一条）**
 
@@ -342,6 +349,11 @@ python3 scripts/render_motion.py promo.html /tmp/x.mp4 1 --stills 2.5,8.3,12.6
 - 截图必须来自真实运行结果，不要画示意图——观众看得出真假
 
 ## 阶段 6 · 封面（16:9 + 4:3 两版，都摆到桌面）
+
+> **B 站封面是两块画布**：首页推荐（4:3）和个人空间（16:9）分别独立，**两张都要给**，
+> 只给一张会被裁成比例不对的样子。投稿脚本里先给 4:3（默认作用对象），再点
+> `.editor_16_9` 画布切过去给 16:9，最后点「完成」。参数化封面见
+> `assets/promo-examples/cover-kit.html`（`?ratio=43` 出 4:3 版）。
 
 B 站封面编辑器要两个比例：**16:9（1920×1080）**用于稿件封面，**4:3（1440×1080）**用于同步。两版都要出；手动上传时，两版都放到桌面，别让人再去工程目录里翻。
 
@@ -367,6 +379,16 @@ $PY ~/.workbuddy/skills/bilibili-explainer/scripts/covers_to_desktop.py \
 封面硬要求：**≤5MB、文字 ≤2 行、主视觉占 60% 以上**。标题字要能在手机小图上读清——把它缩到 300px 宽看一眼，读不清就加大。
 
 ## 阶段 7 · 投稿
+
+> **2026-11 页面改版后，优先用 `scripts/bili_publish.py`**（比 `web_upload.py` 稳）：
+> 分区走 `.select-controller` → `.drop-list-v2-item` 的 `.item-cont-main`（按文字点已经点不中）；
+> 创作声明是自绘 `.bcc-select`，选项是 `li.bcc-option`，空着不给提交；
+> 封面要 4:3 和 16:9 两张（先给 4:3，点 `.editor_16_9` 切到 16:9 再给第二张）。
+> 三条连发用 `bili_publish_batch.py --jobs jobs.json`（持久化 profile，验证一次后面不再问）。
+> 发完评论用 `scripts/post_comment.py <BV> --file x.txt --pin`；置顶接口是
+> `POST /x/v2/reply/top`（`/reply/pin` 已 404）。稿件审核中时 `view` 接口会 404，等公开后再发评论。
+
+
 
 > **`biliup` 这条路已经断了（2026-10 实测）。** 它的登录走废弃的 `passport-tv-login/qrcode`，
 > 扫码永远拿不到 token；投稿 `preupload` 恒返回 `-400`；而直接调 `member.bilibili.com` 会被 WAF

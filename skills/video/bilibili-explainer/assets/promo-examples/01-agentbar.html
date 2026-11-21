@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<style>
+  :root{
+    --bg:#08090C; --ink:#F5F7FA; --dim:#8A93A6;
+    --blue:#2F6BFF; --cyan:#35E0D0; --amber:#FFB020; --violet:#A78BFA;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC",sans-serif;
+    -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;color:var(--ink)}
+  .scene{position:absolute;inset:0;display:none;will-change:transform,opacity}
+  .mono{font-family:"SF Mono",ui-monospace,Menlo,monospace;font-weight:500;letter-spacing:.14em;text-transform:uppercase}
+  .code{font-family:"SF Mono",ui-monospace,Menlo,monospace;font-weight:500;letter-spacing:.02em}
+
+  #grid{position:absolute;inset:0;
+    background-image:radial-gradient(circle at 1px 1px, #232a38 1px, transparent 0);
+    background-size:48px 48px;opacity:.5}
+  #vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%, transparent 30%, #000 118%);opacity:.9}
+  #grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay;
+    background-image:repeating-linear-gradient(0deg,#fff 0 1px,transparent 1px 3px)}
+  #flash{position:absolute;inset:0;background:#fff;opacity:0}
+  .kicker{font-size:20px;color:#5E687C;letter-spacing:.3em}
+  .striplabel{position:absolute;font-size:19px;color:#4B5468}
+</style>
+</head>
+<body>
+<div id="grid"></div>
+<div id="vig"></div>
+
+<!-- S1 混乱 -->
+<div class="scene" id="s1">
+  <div class="kicker mono" style="position:absolute;left:150px;top:150px">BEFORE</div>
+  <div id="s1t" style="position:absolute;left:150px;top:330px;font-size:168px;font-weight:800;letter-spacing:-.04em;line-height:1.02"></div>
+  <div id="s1sub" style="position:absolute;left:156px;bottom:220px;font-size:34px;color:var(--dim)"></div>
+  <div style="position:absolute;right:150px;top:150px;text-align:right">
+    <div class="mono" style="font-size:18px;color:#4B5468">CTRL+TAB / MIN</div>
+    <div id="s1cnt" style="font-size:100px;font-weight:700;letter-spacing:-.04em;color:#2E3646">00</div>
+  </div>
+  <div id="s1bar" style="position:absolute;left:150px;bottom:150px;height:3px;background:#20262F;width:1620px">
+    <div id="s1prog" style="height:3px;width:0;background:#FF5A4E"></div>
+  </div>
+</div>
+
+<!-- S2 一句话 -->
+<div class="scene" id="s2" style="background:#F7F8FA">
+  <div style="position:absolute;left:150px;top:360px">
+    <div id="s2t" style="font-size:190px;font-weight:850;letter-spacing:-.05em;color:#0A0B0E;line-height:1">低头，一眼。</div>
+    <div id="s2rule" style="height:10px;background:var(--blue);width:0;margin-top:44px"></div>
+  </div>
+  <div id="s2sub" class="mono" style="position:absolute;left:156px;bottom:190px;font-size:22px;color:#6B7382">NO WINDOW SWITCHING</div>
+</div>
+
+<!-- S3 Logo -->
+<div class="scene" id="s3">
+  <div style="position:absolute;left:150px;top:398px">
+    <div id="s3logo" style="font-size:220px;font-weight:850;letter-spacing:-.055em;line-height:1">AgentBar</div>
+    <div id="s3scan" style="position:absolute;left:0;top:0;height:5px;width:0;background:var(--blue);box-shadow:0 0 34px 8px #2F6BFF88"></div>
+    <div id="s3tag" style="margin-top:74px;font-size:38px;color:#B9C2D4;font-weight:500">AI 同事在干什么，键盘上方就知道</div>
+  </div>
+  <div id="s3meta" class="mono" style="position:absolute;left:156px;bottom:150px;font-size:19px;color:#5E687C">TOUCH BAR · macOS · SELF-HOSTED · MIT</div>
+</div>
+
+<!-- S4 卡带横移 -->
+<div class="scene" id="s4">
+  <div id="s4deck" style="position:absolute;left:0;top:376px;width:1920px;height:210px;
+       background:linear-gradient(180deg,#0C0F15,#11151D 40%,#0C0F15);border-top:1px solid #1B2130;border-bottom:1px solid #1B2130"></div>
+  <div id="s4beam" style="position:absolute;left:0;top:376px;width:1920px;height:210px;
+       background:linear-gradient(180deg,transparent,#2F6BFF18 35%,#2F6BFF26 50%,#2F6BFF18 65%,transparent)"></div>
+  <div id="s4cam" style="position:absolute;left:0;top:0;width:1360px;height:60px;transform-origin:0 0">
+    <img src="assets/preview-multi.png" style="width:1360px;height:60px;display:block">
+  </div>
+  <div class="striplabel mono" style="left:150px;top:250px">01 / MULTI</div>
+  <div id="s4label" style="position:absolute;left:150px;top:700px;font-size:58px;font-weight:750;letter-spacing:-.02em"></div>
+  <div id="s4dots" style="position:absolute;left:150px;top:800px;display:flex;gap:14px"></div>
+</div>
+
+<!-- S5 待确认 -->
+<div class="scene" id="s5">
+  <div id="s5glow" style="position:absolute;left:600px;top:560px;width:1200px;height:600px;
+       background:radial-gradient(ellipse,#FFB02026,transparent 62%)"></div>
+  <div style="position:absolute;left:150px;top:262px;width:680px">
+    <div class="mono" style="font-size:19px;color:var(--amber)">02 / APPROVAL</div>
+    <div id="s5t" style="margin-top:26px;font-size:82px;font-weight:820;letter-spacing:-.03em;line-height:1.1">等你点头的那张<br>自己会亮</div>
+    <div id="s5sub" style="margin-top:34px;font-size:30px;color:var(--dim);line-height:1.55">琥珀色描边 + 加粗<br>点一下，直接跳回会话</div>
+  </div>
+  <div id="s5cam" style="position:absolute;left:0;top:0;width:1360px;height:60px;transform-origin:0 0">
+    <img src="assets/preview-approval.png" style="width:1360px;height:60px;display:block">
+  </div>
+  <div id="s5mark" style="position:absolute;border:2px solid var(--amber);border-radius:16px;opacity:0;
+       box-shadow:0 0 40px 6px #FFB02055"></div>
+</div>
+
+<!-- S6 特性快切 -->
+<div class="scene" id="s6">
+  <div id="s6bg" style="position:absolute;inset:0"></div>
+  <div id="s6num" class="mono" style="position:absolute;left:150px;top:212px;font-size:22px"></div>
+  <div id="s6t" style="position:absolute;left:150px;top:392px;font-size:150px;font-weight:850;letter-spacing:-.045em;line-height:1.02"></div>
+  <div id="s6d" style="position:absolute;left:156px;top:648px;font-size:34px;font-weight:400"></div>
+  <div id="s6bar" style="position:absolute;left:0;bottom:0;height:8px;width:0"></div>
+</div>
+
+<!-- S7 控制面板 -->
+<div class="scene" id="s7">
+  <div id="s7panel" style="position:absolute;right:120px;top:60px;width:800px;height:960px;overflow:hidden;
+       border-radius:22px;border:1px solid #2A3140;box-shadow:0 40px 120px #000A">
+    <img src="assets/preview-panel.png" style="width:800px;height:1160px;display:block">
+  </div>
+  <div style="position:absolute;left:150px;top:296px;width:720px">
+    <div class="mono" style="font-size:19px;color:#4B5468">03 / CONTROL PANEL</div>
+    <div id="s7t" style="margin-top:24px;font-size:92px;font-weight:820;letter-spacing:-.035em;line-height:1.06">开关<br>都在一个窗口里</div>
+    <div id="s7l" style="margin-top:46px;display:flex;flex-wrap:wrap;gap:12px"></div>
+  </div>
+</div>
+
+<!-- S8 结尾 -->
+<div class="scene" id="s8">
+  <div id="s8glow" style="position:absolute;left:50%;top:48%;width:1500px;height:760px;transform:translate(-50%,-50%);
+       background:radial-gradient(ellipse,#2F6BFF30,transparent 66%)"></div>
+  <div style="position:absolute;left:150px;top:352px;width:1620px">
+    <div id="s8logo" style="font-size:190px;font-weight:850;letter-spacing:-.055em;line-height:1">AgentBar</div>
+    <div id="s8cmd" class="code" style="display:inline-block;margin-top:58px;padding:26px 34px;border:1px solid #2A3140;
+         border-radius:14px;background:#0E1117;font-size:25px;color:#C9D2E3">git clone github.com/patrickb46-hub/agentbar-touchbar</div>
+    <div id="s8meta" style="margin-top:32px;font-size:26px;color:#7D879B">make install ｜ 不依赖 MTMR / BTT / Pock ｜ MIT</div>
+  </div>
+  <div id="s8foot" class="mono" style="position:absolute;right:150px;bottom:112px;font-size:18px;color:#3F4759">SELF-HOSTED TOUCH BAR HOST · 2026</div>
+</div>
+
+<div id="flash"></div>
+<div id="grain"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const cl = (v,a=0,b=1) => Math.min(b, Math.max(a, v));
+const P = (t,t0,t1) => cl((t-t0)/(t1-t0));
+const E = {
+  outExpo: t => t>=1?1:1-Math.pow(2,-9*t),
+  outQuint: t => 1-Math.pow(1-t,5),
+  outBack: t => {const c=2.2; return 1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2)},
+  inOut: t => t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2
+};
+const go = (el,on) => { el.style.display = on?'block':'none' };
+
+// 实测：preview-multi.png 里三张卡的 x 区间（1360 宽）
+const CARDS = [[47,467],[481,902],[916,1336]];
+
+function renderAt(t){
+  $('flash').style.opacity = 0;
+
+  /* ---------- S1 混乱 0 – 2.90 ---------- */
+  go($('s1'), t < 2.90);
+  if (t < 2.90){
+    const stages = [
+      {t0:0.00, t1:0.90, main:'3 个终端',      sub:'每个都在刷日志'},
+      {t0:0.90, t1:1.80, main:'5 个会话',      sub:'谁在跑，谁在等我？'},
+      {t0:1.80, t1:2.90, main:'到底哪个<br>在等我？', sub:'切窗口切到失忆'}
+    ];
+    stages.forEach((s,i)=>{
+      if (t>=s.t0 && t<s.t1){
+        const e = E.outExpo(P(t, s.t0, s.t0+0.16));
+        const el = $('s1t');
+        el.innerHTML = s.main;
+        el.style.opacity = e;
+        el.style.transform = `translateY(${(1-e)*34}px) scale(${1.06-0.06*e})`;
+        el.style.color = i===2 ? '#FF5A4E' : '#F5F7FA';
+        el.style.fontSize = i===2 ? '150px' : '168px';
+        $('s1sub').textContent = s.sub;
+        $('s1sub').style.opacity = E.outQuint(P(t, s.t0+0.06, s.t0+0.32));
+      }
+    });
+    $('s1cnt').textContent = String(Math.floor(cl(t/2.9,0,1)*13)).padStart(2,'0');
+    $('s1prog').style.width = (cl(t/2.9,0,1)*1620)+'px';
+    const hit = (t % 0.90) < 0.09 ? (1-(t%0.90)/0.09) : 0;
+    $('s1').style.transform = `translate(${(Math.random()-0.5)*8*hit}px, ${(Math.random()-0.5)*8*hit}px)`;
+  } else {
+    $('s1').style.transform = 'none';
+  }
+
+  /* ---------- S2 白场 2.90 – 5.81 ---------- */
+  go($('s2'), t >= 2.90 && t < 5.81);
+  if (t >= 2.90 && t < 5.81){
+    const p = E.outExpo(P(t,2.98,3.55));
+    $('s2t').style.opacity = p;
+    $('s2t').style.transform = `translateY(${(1-p)*70}px)`;
+    $('s2rule').style.width = (E.outQuint(P(t,3.35,4.10))*938)+'px';
+    $('s2sub').style.opacity = E.outQuint(P(t,4.0,4.5));
+    if (t < 3.02) $('flash').style.opacity = 0.9*(1-P(t,2.90,3.02));
+  }
+
+  /* ---------- S3 Logo 5.81 – 7.74 ---------- */
+  go($('s3'), t >= 5.81 && t < 7.74);
+  if (t >= 5.81 && t < 7.74){
+    const p = E.outExpo(P(t,5.86,6.5));
+    $('s3logo').style.opacity = p;
+    $('s3logo').style.transform = `translateY(${(1-p)*50}px) scale(${0.94+0.06*p})`;
+    const s = E.outQuint(P(t,6.15,6.85));
+    $('s3scan').style.width = (s*980)+'px';
+    $('s3scan').style.top = (232*s)+'px';
+    const q = E.outQuint(P(t,6.42,7.0));
+    $('s3tag').style.opacity = q;
+    $('s3tag').style.transform = `translateY(${(1-q)*24}px)`;
+    $('s3meta').style.opacity = E.outQuint(P(t,6.8,7.3));
+  }
+
+  /* ---------- S4 卡带横移 7.74 – 11.13 ---------- */
+  go($('s4'), t >= 7.74 && t < 11.13);
+  if (t >= 7.74 && t < 11.13){
+    const segs = [
+      {a:7.74,  b:8.87,  txt:'WorkBuddy · 进行中',  col:'#2F6BFF', i:0},
+      {a:8.87,  b:10.00, txt:'等你确认 · 琥珀色',   col:'#FFB020', i:1},
+      {a:10.00, b:11.13, txt:'dsh · 已完成',        col:'#35E0D0', i:2}
+    ];
+    const seg = segs.find(s=>t>=s.a&&t<s.b) || segs[2];
+    const idx = segs.indexOf(seg);
+    const Z = 2.0;
+    const centerOf = i => (CARDS[i][0]+CARDS[i][1])/2;
+    const prev = idx>0 ? centerOf(idx-1) : centerOf(0);
+    const pan = prev + (centerOf(idx)-prev)*E.inOut(cl(P(t,seg.a,seg.b)/0.26));
+    const X = 960 - Z*pan;
+    const Y = 481 - Z*30;
+    $('s4cam').style.transform = `translate(${X}px, ${Y}px) scale(${Z})`;
+    $('s4label').innerHTML = `<span style="color:${seg.col}">●</span>  ${seg.txt}`;
+    $('s4label').style.opacity = E.outQuint(P(t, seg.a, seg.a+0.16));
+    $('s4label').style.transform = `translateY(${(1-E.outQuint(P(t, seg.a, seg.a+0.2)))*26}px)`;
+    if ($('s4dots').children.length !== 3){
+      $('s4dots').innerHTML = segs.map(()=>'<span style="width:54px;height:5px;border-radius:3px"></span>').join('');
+    }
+    [...$('s4dots').children].forEach((d,i)=>{ d.style.background = (i===idx) ? segs[i].col : '#242B39'; });
+    $('s4beam').style.opacity = 0.55 + 0.45*Math.sin(t*2.0);
+    if (t < 7.80) $('flash').style.opacity = 0.45*(1-P(t,7.74,7.80));
+  }
+
+  /* ---------- S5 待确认 11.13 – 14.03 ---------- */
+  go($('s5'), t >= 11.13 && t < 14.03);
+  if (t >= 11.13 && t < 14.03){
+    const Z = 1.55;
+    const p = E.outQuint(P(t,11.2,12.0));
+    const X = 150 - Z*44 - 40*p;          // 左侧对齐，缓慢左推
+    const Y = 790 - Z*30 + 12*Math.sin(t*0.9);
+    $('s5cam').style.transform = `translate(${X}px, ${Y}px) scale(${Z})`;
+    // 琥珀色「待确认」药丸＝图像 x 44–171
+    const m = $('s5mark');
+    m.style.left = (X + Z*44 - 8) + 'px';
+    m.style.top  = (Y - 8) + 'px';
+    m.style.width = (Z*(171-44) + 16) + 'px';
+    m.style.height = (Z*60 + 16) + 'px';
+    m.style.opacity = E.outQuint(P(t,11.75,12.3)) * (0.72 + 0.28*Math.sin(t*4.2));
+    $('s5glow').style.opacity = 0.5 + 0.5*Math.sin(t*3.1);
+    const q = E.outExpo(P(t,11.22,11.86));
+    $('s5t').style.opacity = q;
+    $('s5t').style.transform = `translateY(${(1-q)*36}px)`;
+    $('s5sub').style.opacity = E.outQuint(P(t,11.6,12.2));
+    if (t < 11.24) $('flash').style.opacity = 0.5*(1-P(t,11.13,11.24));
+  }
+
+  /* ---------- S6 特性快切 14.03 – 17.90 ---------- */
+  go($('s6'), t >= 14.03 && t < 19.36);
+  if (t >= 14.03 && t < 17.90){
+    const feats = [
+      {num:'01 / PARALLEL', t:'多进程并行', d:'一张卡一个会话，底色区分软件', bg:'#2F6BFF', fg:'#ffffff'},
+      {num:'02 / JUMP',     t:'一点跳回',   d:'短按卡片，直接打开那个会话',   bg:'#0E1117', fg:'#ffffff'},
+      {num:'03 / HIDE',     t:'长按隐藏',   d:'只看这个 / 隐藏 2 小时 / 归档', bg:'#35E0D0', fg:'#062B29'},
+      {num:'04 / STAY LIT', t:'保持常亮',   d:'停手 60 秒不再自己变暗',      bg:'#FFB020', fg:'#2A1B00'}
+    ];
+    const step = (19.36-14.03)/4;
+    const i = Math.min(3, Math.floor((t-14.03)/step));
+    const f = feats[i];
+    const lt = (t-14.03) - i*step;
+    const inP = E.outExpo(cl(lt/0.18));
+    $('s6bg').style.background = f.bg;
+    $('s6num').textContent = f.num;
+    $('s6num').style.color = f.fg; $('s6num').style.opacity = 0.7;
+    $('s6t').innerHTML = f.t;
+    $('s6t').style.color = f.fg;
+    $('s6t').style.opacity = inP;
+    $('s6t').style.transform = `translateX(${(1-inP)*90}px) skewX(${(1-inP)*-7}deg)`;
+    $('s6d').textContent = f.d;
+    $('s6d').style.color = f.fg;
+    $('s6d').style.opacity = E.outQuint(cl((lt-0.06)/0.22));
+    $('s6bar').style.width = (cl(lt/step)*1920)+'px';
+    $('s6bar').style.background = f.fg+'55';
+    if (lt < 0.034) $('flash').style.opacity = 0.3*(1-lt/0.034);
+  }
+
+  /* ---------- S7 控制面板 17.90 – 20.81 ---------- */
+  go($('s7'), t >= 19.36 && t < 22.20);
+  if (t >= 17.90 && t < 20.81){
+    const p = E.outQuint(P(t,19.42,20.07));
+    $('s7panel').style.opacity = p;
+    $('s7panel').style.transform = `translateX(${(1-p)*260}px)`;
+    const q = E.outExpo(P(t,19.52,20.07));
+    $('s7t').style.opacity = q;
+    $('s7t').style.transform = `translateY(${(1-q)*30}px)`;
+    const themes = ['深空','石墨','极光','暖阳','浅色'];
+    const cols = ['#2F6BFF','#8A93A6','#35E0D0','#FFB020','#F5F7FA'];
+    if ($('s7l').children.length !== 5){
+      $('s7l').innerHTML = themes.map((n,i)=>
+        `<span style="padding:14px 24px;border:1px solid #2A3140;border-radius:999px;font-size:26px;color:#C9D2E3">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${cols[i]};margin-right:12px"></span>${n}</span>`
+      ).join('');
+    }
+    [...$('s7l').children].forEach((el,i)=>{
+      const s = E.outBack(cl((t-19.95-i*0.1)/0.34));
+      el.style.opacity = cl(s);
+      el.style.transform = `translateY(${(1-s)*22}px) scale(${0.9+0.1*s})`;
+    });
+  }
+
+  /* ---------- S8 结尾 20.81 – 26 ---------- */
+  go($('s8'), t >= 22.20);
+  if (t >= 20.81){
+    const p = E.outExpo(P(t,22.26,23.0));
+    $('s8logo').style.opacity = p;
+    $('s8logo').style.transform = `translateY(${(1-p)*44}px) scale(${0.96+0.04*p})`;
+    const q = E.outQuint(P(t,22.6,23.2));
+    $('s8cmd').style.opacity = q;
+    $('s8cmd').style.transform = `translateY(${(1-q)*22}px)`;
+    $('s8meta').style.opacity = E.outQuint(P(t,22.9,23.5));
+    $('s8foot').style.opacity = E.outQuint(P(t,23.3,23.9)) * 0.9;
+    $('s8glow').style.opacity = 0.62+0.38*Math.sin(t*1.5);
+    if (t < 22.32) $('flash').style.opacity = 0.26*(1-P(t,22.20,22.32));
+  }
+
+  $('grain').style.opacity = 0.05;
+}
+window.renderAt = renderAt;
+</script>
+</body>
+</html>
