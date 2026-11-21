@@ -1,5 +1,6 @@
 ---
 name: imessage-photo-archive
+license: Proprietary
 description: 从 macOS「信息」App（iMessage）按日期或联系人导出照片附件，并按每条消息随图发送的文字分组归档到文件夹，可选转出 JPG 副本、再按 HEIC/JPG 分子目录。当用户说"整理信息里的照片""iMessage 照片导出/归档""苹果短信里发的照片整理到某个文件夹""按消息文字建文件夹分照片"时使用。
 agent_created: true
 ---
@@ -23,7 +24,7 @@ agent_created: true
 | 打不开时 | 把 `chat.db` + `-wal` + `-shm` 复制到临时目录再读；用完删掉副本 |
 | 时间字段 | `message.date` 是 Apple epoch（**纳秒**）：`date/1000000000 + 978307200` 才是 Unix 秒 |
 | ⚠️ 大坑 | `attachment.created_date` **全为 0**，**不能**用它筛日期！必须经 `message_attachment_join` 按 `message.date` 关联 |
-| 联系人姓名 | `chat.db` 里**只有地址**（如 `<handle>@icloud.com`），姓名在 `~/Library/Application Support/AddressBook/Sources/*/AddressBook-v22.abcddb`（同样用只读 URI 打开） |
+| 联系人姓名 | `chat.db` 里**只有地址**（如 `xxx@icloud.com`），姓名在 `~/Library/Application Support/AddressBook/Sources/*/AddressBook-v22.abcddb`（同样用只读 URI 打开） |
 | 附件路径 | `attachment.filename` 常以 `~` 开头，需 `os.path.expanduser`；实体在 `~/Library/Messages/Attachments/<2位>/<2位>/<UUID>/IMG_xxxx.HEIC` |
 | 消息文本 | `message.text` 里含 `U+FFFC`（对象替换符，代表内嵌图片），比较前要 `replace("\ufffc","").strip()` |
 | ⚠️ 大坑 | macOS APFS **默认不区分大小写**：想建 `wp` 而 `WP` 已存在 → 是**同一个文件夹**。要独立就必须换名（如 `wp二练`） |

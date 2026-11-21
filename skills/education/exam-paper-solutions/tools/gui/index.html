@@ -768,13 +768,7 @@ function bindEvents() {
     const up = p.slice(0, p.lastIndexOf("/")) || "/";
     loadDir(up);
   };
-  $("btnHome").onclick = async () => {
-    // 主目录由后端 Path.home() 给出，不硬编码任何用户名
-    try {
-      const j = await api("/api/roots");
-      if (j.roots && j.roots.length) loadDir(j.roots[0].path);
-    } catch (e) { loadDir("/"); }
-  };
+  $("btnHome").onclick = () => loadDir("/Users/" + "int255");
   $("btnRefresh").onclick = () => loadDir(S.dir);
 
   const setSel = (fn) => {

@@ -7,6 +7,7 @@ bili.py — B 站创作闭环 CLI（投稿 / 复盘 / 台账）
   bili.py auth-check                      # 验证登录态
   bili.py auth-login                      # 扫码登录（调 biliup）
   bili.py auth-sync                       # 把 biliup 凭证同步成内部格式
+  bili.py auth-chrome                     # 从 Chrome 直接抓登录态（浏览器还登着但快照过期时用）
   bili.py list [--status pubed]           # 稿件列表
   bili.py upload --video A.mp4 --title T  # 投稿（默认 dry-run，加 --yes 才真发）
   bili.py review [--size 10]              # 复盘数据包（JSON）
@@ -28,7 +29,10 @@ import bili_api as api  # noqa: E402
 HOME = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(HOME, "data")
 BILIUP = os.path.join(HOME, "bin", "biliup")
-BILIUP_COOKIE = os.path.join(DATA, "biliup-cookies.json")
+# 2026-11-15：凭证移出技能目录（BILI_SECRET_DIR 可覆盖）
+SECRETS = os.path.expanduser(
+    os.environ.get("BILI_SECRET_DIR", "~/.workbuddy/secrets/bili"))
+BILIUP_COOKIE = os.path.join(SECRETS, "biliup-cookies.json")
 LEDGER = os.path.join(DATA, "ledger.jsonl")
 REVIEWS = os.path.join(DATA, "reviews")
 
@@ -56,7 +60,7 @@ def cmd_auth_check(_a):
         return out({
             "ok": False, "need_login": e.need_login,
             "code": e.code, "message": e.message,
-            "hint": "凭证缺失或过期。运行 bili.py auth-login 扫码，或手动写入 data/cookies.json",
+            "hint": "凭证缺失或过期。先试 bili.py auth-chrome 从 Chrome 重抓，不行再 bili.py auth-login 扫码",
         })
     except Exception as e:
         return die(f"网络异常: {e}")
@@ -92,6 +96,14 @@ def _sync_from_biliup():
 
 def cmd_auth_sync(_a):
     out(_sync_from_biliup())
+
+
+def cmd_auth_chrome(_a):
+    """浏览器还登着、但 secrets 里的快照过期时，直接从 Chrome 的 Cookies 库重新抓一份"""
+    script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "auth_from_chrome.py")
+    if not os.path.exists(script):
+        die(f"未找到 {script}")
+    sys.exit(subprocess.run([sys.executable, script]).returncode)
 
 
 def cmd_auth_import(a):
@@ -387,6 +399,7 @@ def main():
     sub.add_parser("auth-check").set_defaults(fn=cmd_auth_check)
     sub.add_parser("auth-login").set_defaults(fn=cmd_auth_login)
     sub.add_parser("auth-sync").set_defaults(fn=cmd_auth_sync)
+    sub.add_parser("auth-chrome").set_defaults(fn=cmd_auth_chrome)
 
     pi = sub.add_parser("auth-import")
     pi.add_argument("--cookie", required=True, help="原始 cookie 串，形如 'SESSDATA=..; bili_jct=..'")

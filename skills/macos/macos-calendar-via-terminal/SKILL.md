@@ -1,5 +1,6 @@
 ---
 name: macos-calendar-via-terminal
+license: Proprietary
 description: 在 macOS 上操作系统「日历」App（Apple Calendar / EventKit）的技能。当用户需要查看、扫描、添加、删除、修改日历日程，或批量设置/清空提醒、整理压缩日程、导入赛历校历时使用。核心要点：WorkBuddy 沙箱环境无法直接访问日历（EventKit 返回 DENIED），必须写 Swift(EventKit) 脚本放到桌面，让用户在系统「终端」里运行并授权，脚本把结果写入桌面 txt 文件供读取与核对。触发词：日历、日程、校历、提醒、赛历、事件、EventKit、Calendar、提醒事项。
 agent_created: true
 ---

@@ -49,8 +49,8 @@ setInterval(()=>{ frame(f/FPS); f++; }, 1000/FPS);
 |---|---|---|
 | `ffmpeg` | ❌ **坏的** | 缺 `libxcb.1.dylib`。修复：`brew reinstall ffmpeg` |
 | `say`（TTS） | ✅ 可用 | 中文音色：Eddy / Flo / Grandma / Grandpa（zh_CN）、Meijia（zh_TW） |
-| Node | ✅ v22.22.2 | 路径 `~/.workbuddy/binaries/node/versions/22.22.2-6/bin/node` |
-| Python + Pillow | ✅ | `python3` |
+| Node | ✅ v22.22.2 | 路径 `$HOME/.workbuddy/binaries/node/versions/22.22.2-6/bin/node` |
+| Python + Pillow | ✅ | `$HOME/.workbuddy/binaries/python/envs/default/bin/python` |
 | Chrome / 豆包浏览器 | ✅ | 可做无头录制 |
 
 **动手前第一条命令**：`ffmpeg -version`。坏了先修，否则整条链路断在最后一步。

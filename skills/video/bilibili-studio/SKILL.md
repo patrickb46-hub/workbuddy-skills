@@ -1,6 +1,7 @@
 ---
 name: bilibili-studio
-description: B 站创作闭环工具。当用户要「投稿/发视频到 B 站」「复盘视频数据/看播放量为什么低」「分析完播率互动率」「更新 B 站稿件」「涨粉诊断」时使用。覆盖 投稿 → 复盘 → 学习策略 三阶段闭环：用 biliup 上传视频、用创作中心接口抓五维诊断指标、把结论沉淀成可验证的策略库。
+license: Proprietary
+description: B 站数据复盘工具。当用户要「复盘视频数据/看播放量为什么低」「分析完播率互动率」「涨粉诊断」「整理稿件台账」时使用。用创作中心接口抓五维诊断指标，把结论沉淀成可验证的策略库。注意：本技能不负责投稿——biliup 通道已于 2026-10 失效，投稿一律走 bilibili-explainer/scripts/web_upload.py。
 version: 1.0.0
 ---
 
@@ -11,7 +12,7 @@ version: 1.0.0
 > 本技能保留价值在**数据侧**：抓数据、复盘、更新策略库——这部分接口仍然正常。
 
 > **投稿素材是科普短片时，先走 `bilibili-explainer`。** 那个技能负责「事实核查 → 旁白 → 配音 → 画面 → 渲染 →
-> 封面」，工程落在 `~/BilibiliVideos/<slug>/`。本技能保留为数据侧：抓数据、复盘、更新策略库。
+> 封面」，工程落在 `$HOME/Desktop/AI/Bilibili Videos/<slug>/`。本技能保留为数据侧：抓数据、复盘、更新策略库。
 
 一个把「投稿 → 复盘 → 学习」串成闭环的技能。核心不是自动上传，而是**每投一条视频都在验证一个假设**，
 让第 10 条视频比第 1 条更有可能跑出来。
@@ -27,10 +28,10 @@ version: 1.0.0
 
 ## 硬前提（缺一不可）
 
-1. **登录凭证**：`data/cookies.json` 里的 SESSDATA + bili_jct。首次需扫码，之后可复用至过期。
+1. **登录凭证**：`~/.workbuddy/secrets/bili/cookies.json`（`BILI_SECRET_DIR` 可覆盖）里的 SESSDATA + bili_jct。首次需扫码，之后可复用至过期；浏览器还登着时用 `bili.py auth-chrome` 直接重抓，不用扫码。
 2. **视频文件**：本地路径，B 站网页端单文件上限 8GB。
-3. **Python 环境**：`python3`（零第三方依赖，只用了标准库）。
-4. **biliup 二进制**：`bin/biliup`，已内置（v0.2.4）。若失效可从 `github.com/biliup/biliup-rs/releases` 重下 `x86_64-macos` 包解压覆盖。
+3. **Python 环境**：`$HOME/.workbuddy/binaries/python/envs/default/bin/python`（零第三方依赖，只用了标准库）。
+4. **biliup 二进制**：`bin/biliup`（v0.2.4）**已废弃，仅存档**，不要再用它上传——需要回退时从 `github.com/biliup/biliup-rs/releases` 重下 `x86_64-macos` 包。投稿请走 `bilibili-explainer/scripts/web_upload.py`。
 
 > **「完全自主」的真实边界**：登录要人扫一次码，发布前要人点一次确认。
 > 这两处不设自动化，因为一次误发不可撤回，一次凭证泄露不可挽回。其余全流程可无人干预。
@@ -40,7 +41,7 @@ version: 1.0.0
 ## 阶段 0 · 环境自检（每次会话开始先跑）
 
 ```bash
-PY=python3
+PY=$HOME/.workbuddy/binaries/python/envs/default/bin/python
 S=~/.workbuddy/skills/bilibili-studio/scripts/bili.py
 $PY $S auth-check
 ```
@@ -76,7 +77,7 @@ $PY $S auth-check
 - 标题必须和内容一致。标题党会让你在「高播放 + 低完播」的死局里，短期好看长期掉权重。
 
 **② 封面**（≤5MB，建议 16:9，1146×717 以上）
-- 可以用 ImageGen 生成，也可以从视频里截一帧。
+- 可以用 ImageGen 生成（dsh 侧没有此工具，改用视频截帧或纯代码封面），也可以从视频里截一帧。
 - 封面上文字不超过 2 行、主视觉占画面 60% 以上。
 
 **③ 分区**（tid）
@@ -197,7 +198,7 @@ $PY $S report --size 10        # 生成 Markdown 报告 + 数据快照
 1. **发布必须二次确认。** 任何 `--yes` 之前都要让用户看到完整投稿计划并明确同意。
 2. **不刷量、不互赞互粉、不用脚本制造虚假互动。** 被识别后掉权重比没流量更严重。
 3. **不改已有稿件的内容去「洗数据」。** 改标题封面会让历史数据失去可比性，破坏复盘样本。
-4. **凭证只存在本地 `data/cookies.json`（权限 600）**，绝不写进对话、日志、公开文件。
+4. **凭证只存在本地 `~/.workbuddy/secrets/bili/cookies.json`（权限 600）**，绝不写进对话、日志、公开文件。
 5. **不代填转载内容而不标来源。** `--copyright 2` 时必须填 `--source`，这是版权底线。
 6. 遇 `-352 / -412 / -509` 风控码，**立即停止，不要重试**，告知用户稍后再试。
 
@@ -228,11 +229,12 @@ $PY $S report --size 10        # 生成 Markdown 报告 + 数据快照
 │   ├── review-metrics.md         指标判读手册
 │   └── playbook.md               策略库 ← 学习成果都在这
 └── data/
-    ├── cookies.json              凭证（600 权限）
-    ├── biliup-cookies.json       biliup 自己的凭证
     ├── ledger.jsonl              投稿台账（含每次的策略假设）
     └── reviews/                  复盘报告与数据快照
 ```
+
+凭证不在技能目录里，统一放 `~/.workbuddy/secrets/bili/`：
+`cookies.json`（600，登录态）+ `biliup-cookies.json`（biliup 自己的，已废弃）。
 
 ## 相关但不替代
 

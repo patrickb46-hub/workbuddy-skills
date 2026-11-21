@@ -70,7 +70,7 @@ TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 echo "== 1/2 烧字幕（libass · ${FONT} ${FONTSIZE}px）=="
 if [ -z "$BGM" ]; then
   "$FF" -y -hide_banner -loglevel error -i "$VIDEO" \
-    -vf "$SUB_FILTER" -c:v libx264 -crf 18 -pix_fmt yuv420p -an "$OUT" || exit 1
+    -vf "$SUB_FILTER" -c:v libx264 -crf 14 -pix_fmt yuv420p -an "$OUT" || exit 1
 else
   [ -f "$BGM" ] || { echo "找不到配乐：$BGM"; exit 1; }
   echo "== 2/2 铺配乐（循环 + 淡入淡出 + 响度归一）=="
@@ -83,7 +83,7 @@ else
 loudnorm=I=-28:TP=-6:LRA=11,\
 afade=t=in:st=0:d=2.0,afade=t=out:st=${FADE_OUT_ST}:d=3.0[a]" \
     -map "[v]" -map "[a]" \
-    -c:v libx264 -crf 18 -pix_fmt yuv420p -c:a aac -b:a 192k "$OUT" || exit 1
+    -c:v libx264 -crf 14 -pix_fmt yuv420p -c:a aac -b:a 192k "$OUT" || exit 1
 fi
 
 echo "== 质检 =="

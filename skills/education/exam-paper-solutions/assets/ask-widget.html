@@ -1,0 +1,699 @@
+<!-- WBS-ASK-WIDGET v1 · 选中提问（DeepSeek 侧栏） -->
+<script type="application/json" id="waskCfg">{"endpoint":"https://api.deepseek.com/chat/completions","model":"deepseek-flash","key":""}</script>
+<style>
+.wask-panel{
+  position:fixed; top:0; right:0; bottom:0; width:400px; max-width:94vw; z-index:9999;
+  display:flex; flex-direction:column; background:#fff;
+  border-left:1px solid var(--line,#d8d8d8); box-shadow:-6px 0 26px rgba(0,0,0,.13);
+  font-family:"Songti SC","STSong","Noto Serif CJK SC",serif; font-size:14px;
+  line-height:1.72; color:#1a1a1a;
+  transform:translateX(102%); visibility:hidden; transition:transform .22s ease;
+}
+body.wask-open .wask-panel{ transform:none; visibility:visible; }
+body.wask-open{ padding-right:400px; }
+
+.wask-hd{ display:flex; align-items:center; gap:7px; flex:none;
+  padding:8px 10px 8px 12px; background:var(--accent2,#f6efef);
+  border-bottom:1px solid var(--line,#d8d8d8); }
+.wask-tt{ font-weight:700; color:var(--accent,#8b1f1f); letter-spacing:1px; font-size:14.5px; }
+.wask-tag{ font-size:10.5px; color:#888; background:#fff; border:1px solid var(--line,#d8d8d8);
+  border-radius:9px; padding:0 6px; line-height:15px; }
+.wask-sp{ flex:1; }
+.wask-hd button{ font-family:inherit; font-size:11.5px; line-height:1.4; padding:2px 7px;
+  border:1px solid #e2c9c9; background:#fff; color:var(--accent,#8b1f1f);
+  border-radius:3px; cursor:pointer; }
+.wask-hd button:hover{ background:#fff; border-color:var(--accent,#8b1f1f); }
+.wask-hd label{ font-size:11px; color:#777; display:flex; align-items:center; gap:3px;
+  cursor:pointer; margin-right:3px; }
+.wask-hd label input{ margin:0; }
+
+.wask-body{ flex:1; overflow-y:auto; padding:10px 12px 4px; }
+.wask-quote{ background:#fbfbf9; border:1px solid var(--line,#d8d8d8);
+  border-left:3px solid #c8a5a5; padding:6px 9px; margin-bottom:10px; }
+.wask-quote[hidden]{ display:none !important; }
+.wask-qh{ display:flex; align-items:center; gap:6px; font-size:11px; color:#999; margin-bottom:3px; }
+.wask-qh b{ color:var(--accent,#8b1f1f); font-weight:700; }
+.wask-qh button{ margin-left:auto; border:0; background:none; color:#aaa; cursor:pointer;
+  font-size:14px; line-height:1; padding:0 2px; }
+.wask-qh button:hover{ color:var(--accent,#8b1f1f); }
+.wask-qt{ max-height:108px; overflow-y:auto; font-size:13px; color:#444;
+  white-space:pre-wrap; word-break:break-word; }
+
+.wask-msgs{ padding-bottom:8px; }
+.wask-m{ margin:12px 0; }
+.wask-m .who{ font-size:10.5px; color:#aaa; letter-spacing:1px; margin-bottom:3px; }
+.wask-u .bd{ background:var(--accent2,#f6efef); border-left:3px solid var(--accent,#8b1f1f);
+  padding:7px 10px; white-space:pre-wrap; word-break:break-word; }
+.wask-note{ font-size:10.5px; color:#b08a8a; letter-spacing:.5px; margin-bottom:2px; }
+.wask-a .bd{ background:#fbfbf9; border:1px solid var(--line,#d8d8d8); padding:8px 11px;
+  word-break:break-word; }
+.wask-a .bd p{ margin:6px 0; }
+.wask-a .bd ul,.wask-a .bd ol{ margin:6px 0 6px 20px; padding:0; }
+.wask-a .bd li{ margin:3px 0; }
+.wask-a .bd code{ font-family:ui-monospace,Menlo,monospace; font-size:12.5px;
+  background:#f0efeb; padding:0 3px; border-radius:2px; }
+.wask-a .bd pre{ background:#f4f3ee; border:1px solid var(--line,#d8d8d8); padding:7px 9px;
+  overflow-x:auto; font-size:12.5px; margin:7px 0; }
+.wask-a .bd pre code{ background:none; padding:0; }
+.wask-m .wask-m{ font-family:Georgia,"Times New Roman",serif; font-style:italic;
+  color:#2b2b2b; padding:0 1px; }
+.wask-acts{ margin-top:5px; display:flex; gap:8px; font-size:11px; color:#aaa; }
+.wask-acts button{ border:0; background:none; color:#aaa; cursor:pointer; font-family:inherit;
+  font-size:11px; padding:0; text-decoration:underline dotted; }
+.wask-acts button:hover{ color:var(--accent,#8b1f1f); }
+.wask-think{ border:1px dashed var(--line,#d8d8d8); background:#fcfcfa; color:#8a8a8a;
+  font-size:12px; padding:5px 8px; margin-bottom:6px; }
+.wask-think summary{ cursor:pointer; color:#aaa; font-size:11.5px; }
+.wask-think .tx{ white-space:pre-wrap; margin-top:4px; max-height:180px; overflow-y:auto; }
+.wask-err{ color:#8b1f1f; font-size:12.5px; background:#fdf3f3; border:1px solid #edd4d4;
+  padding:6px 9px; margin:6px 0; }
+.wask-empty{ color:#bbb; font-size:12.5px; text-align:center; padding:26px 8px; line-height:2; }
+
+.wask-ft{ flex:none; border-top:1px solid var(--line,#d8d8d8); padding:8px 10px 9px; background:#fcfcfa; }
+.wask-ft textarea{ width:100%; resize:none; font-family:inherit; font-size:13.5px; line-height:1.6;
+  padding:6px 8px; border:1px solid var(--line,#d8d8d8); border-radius:3px; background:#fff;
+  color:#1a1a1a; outline:none; min-height:44px; max-height:150px; }
+.wask-ft textarea:focus{ border-color:#c8a5a5; }
+.wask-fb{ display:flex; align-items:center; gap:6px; margin-top:6px; }
+.wask-hint{ font-size:10.5px; color:#bbb; flex:1; }
+.wask-send{ font-family:inherit; font-size:13px; padding:4px 16px; cursor:pointer;
+  border:1px solid var(--accent,#8b1f1f); background:var(--accent,#8b1f1f); color:#fff;
+  border-radius:3px; }
+.wask-send:hover{ opacity:.88; }
+.wask-send.stop{ background:#fff; color:var(--accent,#8b1f1f); }
+.wask-send[disabled]{ opacity:.45; cursor:default; }
+
+.wask-setup{ background:#fdf7e6; border:1px solid #e8d9a8; padding:10px 12px; margin:10px 0; font-size:13px; }
+.wask-setup p{ margin:4px 0 8px; color:#6b5a2a; line-height:1.65; }
+.wask-setup input{ width:100%; font-family:ui-monospace,Menlo,monospace; font-size:12px;
+  padding:5px 7px; border:1px solid #d9c98c; border-radius:3px; background:#fff; color:#1a1a1a; }
+.wask-setup .row{ display:flex; gap:6px; margin-top:6px; }
+.wask-setup .row button{ font-family:inherit; font-size:12px; padding:3px 10px; cursor:pointer;
+  border:1px solid #c9b169; background:#fff; color:#6b5a2a; border-radius:3px; }
+.wask-setup .row button.pri{ background:var(--accent,#8b1f1f); border-color:var(--accent,#8b1f1f); color:#fff; }
+
+.wask-menu{ position:fixed; z-index:10000; display:flex; flex-direction:column;
+  min-width:172px; padding:4px; background:#fff; border:1px solid var(--line,#d8d8d8);
+  border-radius:5px; box-shadow:0 6px 22px rgba(0,0,0,.16);
+  font-family:"Songti SC","STSong","Noto Serif CJK SC",serif; font-size:13px; }
+.wask-menu[hidden]{ display:none !important; }
+.wask-menu .pv{ font-size:11px; color:#aaa; padding:3px 8px 5px; border-bottom:1px solid #eee;
+  margin-bottom:3px; max-width:250px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.wask-menu button{ display:flex; align-items:center; gap:7px; font-family:inherit; font-size:13px;
+  text-align:left; padding:5px 9px; border:0; background:none; border-radius:3px;
+  cursor:pointer; color:#333; }
+.wask-menu button:hover{ background:var(--accent2,#f6efef); color:var(--accent,#8b1f1f); }
+.wask-menu button .ic{ width:14px; color:var(--accent,#8b1f1f); font-weight:700; }
+
+/* 侧栏打开时，别让固定控件压在面板底下 */
+body.wask-open .fd-ctl{ right:416px; transition:right .22s ease; }
+body.wask-open .wbs-search{ right:416px; transition:right .22s ease; }
+
+@media (max-width:880px){
+  body.wask-open{ padding-right:0; }
+  body.wask-open .fd-ctl,body.wask-open .wbs-search{ right:16px; }
+  .wask-panel{ width:100%; max-width:100%; }
+}
+@media print{
+  .wask-panel,.wask-menu{ display:none !important; }
+  body.wask-open{ padding-right:0 !important; }
+}
+</style>
+
+<div class="wask-menu" id="waskMenu" hidden>
+  <div class="pv" id="waskPv"></div>
+  <button type="button" id="waskAskBtn"><span class="ic">问</span>提问（选中这段）</button>
+  <button type="button" id="waskCopyBtn"><span class="ic">⧉</span>复制</button>
+</div>
+
+<aside class="wask-panel" id="waskPanel" aria-hidden="true" aria-label="提问侧栏">
+  <div class="wask-hd">
+    <span class="wask-tt">提问</span>
+    <span class="wask-tag" id="waskModelTag">deepseek-flash</span>
+    <span class="wask-sp"></span>
+    <label title="开启后模型会先想再答，更慢但更稳"><input type="checkbox" id="waskDeep">深想</label>
+    <button type="button" id="waskCfgBtn" title="设置 API Key">设置</button>
+    <button type="button" id="waskClear" title="清空本次对话">清空</button>
+    <button type="button" id="waskClose" title="关闭（Esc）">×</button>
+  </div>
+  <div class="wask-body" id="waskBody">
+    <div class="wask-quote" id="waskQuote" hidden>
+      <div class="wask-qh"><b id="waskQCtx">选中内容</b><button type="button" id="waskQX" title="不引用这段">×</button></div>
+      <div class="wask-qt" id="waskQText"></div>
+    </div>
+    <div class="wask-msgs" id="waskMsgs"></div>
+  </div>
+  <div class="wask-ft">
+    <textarea id="waskInput" rows="2" placeholder="想问什么？（Enter 发送，Shift+Enter 换行）"></textarea>
+    <div class="wask-fb">
+      <span class="wask-hint" id="waskHint"></span>
+      <button type="button" class="wask-send" id="waskSend">发送</button>
+    </div>
+  </div>
+</aside>
+
+<script>
+(function(){
+"use strict";
+if(window.__waskReady){ return; }
+window.__waskReady = true;
+
+/* ── 配置 ───────────────────────────────────────────── */
+var DEFAULTS = { endpoint:'https://api.deepseek.com/chat/completions', model:'deepseek-flash', key:'' };
+var CFG = {};
+(function(){
+  for(var k in DEFAULTS){ CFG[k] = DEFAULTS[k]; }
+  var el = document.getElementById('waskCfg');
+  if(!el){ return; }
+  try{
+    var raw = JSON.parse(el.textContent || '{}');
+    for(var k2 in raw){ if(raw[k2]){ CFG[k2] = raw[k2]; } }
+  }catch(e){}
+})();
+
+var LS_KEY = 'wask.ds.key', LS_DEEP = 'wask.deep';
+var SYS = '你是一位耐心的中学老师，正在帮学生看懂一份试卷全解。'
+        + '学生会贴出他选中的原文片段（可能很短、可能是公式），然后提出问题。要求：'
+        + '1) 先给结论，再讲原因，回答控制在 8 行以内，需要时用 1) 2) 3) 分步；'
+        + '2) 每一步都要写清依据（定理名／定义／公式），禁止"显然""易知""同理可得"；'
+        + '3) 数学式子用 $...$ 包裹，分数写 $a/b$ 形式，不要用 LaTeX 复杂命令；'
+        + '4) 学生问的是某一步怎么来的，就把被省掉的中间步骤补全；'
+        + '5) 不整段复述原文；不确定就直说，不许编；'
+        + '6) 用简体中文，语气平和，不吹捧。';
+
+/* ── 元素 ───────────────────────────────────────────── */
+var panel  = document.getElementById('waskPanel');
+var bodyEl = document.getElementById('waskBody');
+var msgsEl = document.getElementById('waskMsgs');
+var quoteEl= document.getElementById('waskQuote');
+var qCtx   = document.getElementById('waskQCtx');
+var qText  = document.getElementById('waskQText');
+var input  = document.getElementById('waskInput');
+var sendBt = document.getElementById('waskSend');
+var hintEl = document.getElementById('waskHint');
+var menu   = document.getElementById('waskMenu');
+var pvEl   = document.getElementById('waskPv');
+var deepCb = document.getElementById('waskDeep');
+if(!panel || !input){ return; }
+
+/* ── 状态 ───────────────────────────────────────────── */
+var state = { msgs:[], quote:null, quoteMark:0, ctrl:null, busy:false, setupOpen:false, sentMark:-1 };
+
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function apiKey(){ return (lsGet(LS_KEY) || CFG.key || '').trim(); }
+function isDeep(){ return !!(deepCb && deepCb.checked); }
+
+/* ── 小工具 ──────────────────────────────────────────── */
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' })[c];
+  });
+}
+var TEX = { '\\times':'×','\\div':'÷','\\cdot':'·','\\pm':'±','\\mp':'∓','\\leq':'≤','\\geq':'≥',
+  '\\neq':'≠','\\approx':'≈','\\angle':'∠','\\triangle':'△','\\circ':'°','\\perp':'⊥',
+  '\\parallel':'∥','\\because':'∵','\\therefore':'∴','\\Rightarrow':'⇒','\\rightarrow':'→',
+  '\\cong':'≌','\\sim':'∽','\\pi':'π','\\alpha':'α','\\beta':'β','\\theta':'θ','\\varphi':'φ',
+  '\\ldots':'…','\\cdots':'…','\\sum':'Σ','\\infty':'∞','\\in':'∈','\\subseteq':'⊆','\\cup':'∪' };
+function tex(t){
+  t = t.replace(/\\frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g, '$1/$2');
+  t = t.replace(/\\sqrt\s*\{([^{}]*)\}/g, '√($1)');
+  t = t.replace(/\\left|\\right/g, '');
+  t = t.replace(/\\[a-zA-Z]+/g, function(m){ return (TEX[m] !== undefined) ? TEX[m] : m.slice(1); });
+  t = t.replace(/[{}]/g, '');
+  t = t.replace(/\^\s*°/g, '°');                                   // 90^\circ → 90^° → 90°
+  t = t.replace(/\^\s*([0-9a-zA-Z+\-])/g, '<sup>$1</sup>');        // x^2
+  return t;
+}
+function inline(s){
+  var out = esc(s);
+  out = out.replace(/\$([^$\n]+)\$/g, function(_, m){ return '<span class="wask-m">' + tex(m) + '</span>'; });
+  out = out.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  out = out.replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>');
+  out = out.replace(/(^|[^*\w])\*([^*\n]+)\*/g, '$1<i>$2</i>');
+  return out;
+}
+/* 极简 markdown：段落 / 有序无序列表 / 代码块 / 强调 / $公式$ */
+function md(src){
+  var lines = String(src).replace(/\r/g,'').split('\n');
+  var html = [], buf = [], list = null, fence = false, code = [];
+  function flushP(){
+    if(!buf.length){ return; }
+    html.push('<p>' + buf.map(inline).join('<br>') + '</p>');
+    buf = [];
+  }
+  function flushL(){
+    if(list){ html.push('</' + list + '>'); list = null; }
+  }
+  for(var i = 0; i < lines.length; i++){
+    var ln = lines[i];
+    if(/^\s*```/.test(ln)){
+      if(fence){ html.push('<pre><code>' + esc(code.join('\n')) + '</code></pre>'); code = []; fence = false; }
+      else{ flushP(); flushL(); fence = true; }
+      continue;
+    }
+    if(fence){ code.push(ln); continue; }
+    if(!ln.trim()){ flushP(); flushL(); continue; }
+    var mo = ln.match(/^\s*(\d+)[.)、]\s+(.*)$/), mu = ln.match(/^\s*[-*·]\s+(.*)$/);
+    if(mu){
+      flushP();
+      if(list !== 'ul'){ flushL(); html.push('<ul>'); list = 'ul'; }
+      html.push('<li>' + inline(mu[1]) + '</li>');
+      continue;
+    }
+    if(mo){
+      flushP();
+      if(list !== 'ol'){ flushL(); html.push('<ol>'); list = 'ol'; }
+      html.push('<li>' + inline(mo[2]) + '</li>');
+      continue;
+    }
+    flushL();
+    buf.push(ln);
+  }
+  if(fence && code.length){ html.push('<pre><code>' + esc(code.join('\n')) + '</code></pre>'); }
+  flushP(); flushL();
+  return html.join('');
+}
+
+/* ── 面板开合 ───────────────────────────────────────── */
+function openPanel(){
+  panel.setAttribute('aria-hidden','false');
+  document.body.classList.add('wask-open');
+  renderQuote();
+  if(!apiKey()){ openSetup(); }
+  renderEmpty();
+  setTimeout(function(){ try{ input.focus(); }catch(e){} }, 240);
+}
+function closePanel(){
+  panel.setAttribute('aria-hidden','true');
+  document.body.classList.remove('wask-open');
+  hideMenu();
+}
+function togglePanel(){ document.body.classList.contains('wask-open') ? closePanel() : openPanel(); }
+
+function renderQuote(){
+  if(!state.quote){ quoteEl.hidden = true; return; }
+  quoteEl.hidden = false;
+  qCtx.textContent = state.quote.ctx || '选中内容';
+  qText.textContent = state.quote.text;
+}
+function renderEmpty(){
+  if(state.msgs.length || state.setupOpen){ return; }
+  if(msgsEl.querySelector('.wask-m')){ return; }
+  var tip = document.createElement('div');
+  tip.className = 'wask-empty';
+  tip.textContent = state.quote ? '已引用这段内容，直接问就行' : '先在正文里选中一段，右键「提问」';
+  msgsEl.appendChild(tip);
+}
+function clearEmpty(){
+  var e = msgsEl.querySelector('.wask-empty');
+  if(e){ e.remove(); }
+}
+
+/* ── 设置（API Key） ─────────────────────────────────── */
+var setupBox = null;
+function openSetup(){
+  state.setupOpen = true;
+  if(setupBox){ setupBox.querySelector('input').focus(); return; }
+  clearEmpty();
+  setupBox = document.createElement('div');
+  setupBox.className = 'wask-setup';
+  setupBox.innerHTML =
+    '<p><b>需要 DeepSeek API Key</b><br>只有你自己的浏览器读得到，存在 localStorage，不写进这份 HTML。'
+    + '去 platform.deepseek.com 取 <code>sk-...</code>，粘进来即可。</p>'
+    + '<input type="password" id="waskKeyIn" placeholder="sk-..." autocomplete="off" spellcheck="false">'
+    + '<div class="row"><button type="button" class="pri" id="waskKeySave">保存并使用</button>'
+    + '<button type="button" id="waskKeyCancel">先不用</button></div>';
+  msgsEl.insertBefore(setupBox, msgsEl.firstChild);
+  var box = setupBox.querySelector('input');
+  if(apiKey()){ box.value = apiKey(); }
+  setupBox.querySelector('#waskKeySave').addEventListener('click', function(){
+    var v = box.value.trim();
+    if(!v){ box.focus(); return; }
+    lsSet(LS_KEY, v);
+    closeSetup();
+    pushSys('Key 已保存，可以提问了。');
+    input.focus();
+  });
+  setupBox.querySelector('#waskKeyCancel').addEventListener('click', closeSetup);
+  box.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); setupBox.querySelector('#waskKeySave').click(); }
+  });
+  box.focus();
+}
+function closeSetup(){
+  state.setupOpen = false;
+  if(setupBox){ setupBox.remove(); setupBox = null; }
+}
+
+/* ── 消息渲染 ───────────────────────────────────────── */
+function pushSys(text){
+  clearEmpty();
+  var d = document.createElement('div');
+  d.className = 'wask-err';
+  d.style.color = '#6b5a2a'; d.style.background = '#fdf7e6'; d.style.borderColor = '#e8d9a8';
+  d.textContent = text;
+  msgsEl.appendChild(d);
+  scrollBottom(true);
+}
+function addMsg(role, text, note){
+  clearEmpty();
+  var wrap = document.createElement('div');
+  wrap.className = 'wask-m ' + (role === 'user' ? 'wask-u' : 'wask-a');
+  var who = document.createElement('div');
+  who.className = 'who';
+  who.textContent = role === 'user' ? '我' : CFG.model;
+  var bd = document.createElement('div');
+  bd.className = 'bd';
+  if(role === 'user'){
+    if(note){
+      var nb = document.createElement('div');
+      nb.className = 'wask-note';
+      nb.textContent = '针对 ' + note;
+      bd.appendChild(nb);
+    }
+    var tx = document.createElement('div');
+    tx.textContent = text;
+    bd.appendChild(tx);
+  }else{
+    bd.innerHTML = md(text);
+  }
+  wrap.appendChild(who); wrap.appendChild(bd);
+  msgsEl.appendChild(wrap);
+  return { wrap:wrap, bd:bd };
+}
+function addErr(text){
+  clearEmpty();
+  var d = document.createElement('div');
+  d.className = 'wask-err';
+  d.textContent = text;
+  msgsEl.appendChild(d);
+  scrollBottom(true);
+}
+function scrollBottom(force){
+  if(!bodyEl){ return; }
+  var near = bodyEl.scrollHeight - bodyEl.scrollTop - bodyEl.clientHeight < 90;
+  if(force || near){ bodyEl.scrollTop = bodyEl.scrollHeight; }
+}
+
+/* ── 选中 → 右键菜单 ────────────────────────────────── */
+function ctxOf(node){
+  var el = (node && node.nodeType === 1) ? node : (node ? node.parentNode : null);
+  if(!el || !el.closest){ return ''; }
+  var card = el.closest('.qcard');
+  var fold = el.closest('.fd');
+  var parts = [];
+  if(card){
+    var no = card.querySelector('.qno');
+    if(no){ parts.push(no.textContent.trim()); }
+  }
+  if(fold){
+    var t = fold.querySelector('.fd-hd .fd-t');
+    if(!t){
+      var hd = fold.querySelector('.fd-hd');
+      if(hd){ t = { textContent: hd.textContent.replace(/[＋－]$/,'').trim().slice(0,10) }; }
+    }
+    if(t && t.textContent.trim()){ parts.push(t.textContent.trim()); }
+  }
+  return parts.join(' · ');
+}
+function showMenu(x, y, preview){
+  pvEl.textContent = preview.length > 34 ? preview.slice(0, 34) + '…' : preview;
+  menu.hidden = false;
+  var w = menu.offsetWidth || 180, h = menu.offsetHeight || 90;
+  var left = Math.min(x, window.innerWidth - w - 8);
+  var top  = Math.min(y, window.innerHeight - h - 8);
+  menu.style.left = Math.max(6, left) + 'px';
+  menu.style.top  = Math.max(6, top) + 'px';
+}
+function hideMenu(){ if(menu){ menu.hidden = true; } }
+
+var pending = null;
+document.addEventListener('contextmenu', function(e){
+  var t = e.target;
+  if(!t || !t.closest){ return; }
+  if(t.closest('.wask-panel') || t.closest('.wask-menu')){ return; }
+  if(/^(INPUT|TEXTAREA|SELECT)$/.test(t.nodeName) || t.isContentEditable){ return; }
+  var sel = window.getSelection();
+  var raw = sel ? sel.toString() : '';
+  var txt = raw.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  if(txt.length < 2){ hideMenu(); return; }
+  e.preventDefault();
+  pending = { text: txt, ctx: ctxOf(sel.anchorNode || t) };
+  showMenu(e.clientX, e.clientY, txt.replace(/\s+/g, ' '));
+}, true);
+
+document.addEventListener('mousedown', function(e){
+  if(menu.hidden){ return; }
+  if(e.target.closest && e.target.closest('.wask-menu')){ e.preventDefault(); return; }
+  hideMenu();
+}, true);
+window.addEventListener('scroll', hideMenu, true);
+window.addEventListener('resize', hideMenu);
+
+document.getElementById('waskAskBtn').addEventListener('click', function(){
+  if(!pending){ hideMenu(); return; }
+  state.quote = { text: pending.text, ctx: pending.ctx };
+  state.quoteMark++;
+  hideMenu();
+  openPanel();
+  renderQuote();
+});
+document.getElementById('waskCopyBtn').addEventListener('click', function(){
+  if(pending && navigator.clipboard){
+    try{ navigator.clipboard.writeText(pending.text); }catch(e){}
+  }
+  hideMenu();
+});
+
+/* ── 发送 ───────────────────────────────────────────── */
+function setBusy(on){
+  state.busy = on;
+  sendBt.textContent = on ? '停止' : '发送';
+  sendBt.classList.toggle('stop', on);
+}
+function abort(){ if(state.ctrl){ try{ state.ctrl.abort(); }catch(e){} } }
+
+function buildContent(q){
+  var c = '';
+  if(state.quote && state.sentMark !== state.quoteMark){
+    c += '【选中原文】' + (state.quote.ctx ? '（' + state.quote.ctx + '）' : '') + '\n'
+       + state.quote.text + '\n\n';
+  }
+  return c + (q || '请把这段讲清楚。');
+}
+
+function send(){
+  if(state.busy){ abort(); return; }
+  var q = input.value.trim();
+  if(!q && !state.quote){ input.focus(); return; }
+  var key = apiKey();
+  if(!key){ openSetup(); return; }
+  closeSetup();
+
+  var fresh = !!(state.quote && state.sentMark !== state.quoteMark);
+  var content = buildContent(q);
+  if(state.quote){ state.sentMark = state.quoteMark; }
+
+  state.msgs.push({ role:'user', content:content });
+  addMsg('user', q || '请把这段讲清楚。', fresh ? (state.quote.ctx || '选中内容') : '');
+  input.value = '';
+  autoGrow();
+  hintEl.textContent = '';
+
+  var node = addMsg('assistant', '');
+  var think = document.createElement('details');
+  think.className = 'wask-think';
+  think.innerHTML = '<summary>思考中…</summary><div class="tx"></div>';
+  var thinkTx = think.querySelector('.tx');
+  node.wrap.insertBefore(think, node.bd);
+  node.bd.innerHTML = '<span style="color:#bbb">…</span>';
+
+  var acc = '', rea = '', raf = 0, done = false;
+  function paint(){
+    if(raf){ return; }
+    raf = requestAnimationFrame(function(){
+      raf = 0;
+      if(rea){ thinkTx.textContent = rea; }
+      if(acc){ node.bd.innerHTML = md(acc); }
+      scrollBottom(false);
+    });
+  }
+  function finish(err){
+    if(done){ return; }
+    done = true;
+    setBusy(false);
+    if(think.parentNode){ think.parentNode.removeChild(think); }
+    if(err){
+      if(acc){ node.bd.innerHTML = md(acc); }
+      else if(node.wrap.parentNode){ node.wrap.parentNode.removeChild(node.wrap); }
+      addErr(err);
+      state.msgs.pop();
+      return;
+    }
+    if(!acc){ node.bd.innerHTML = '<span style="color:#aaa">（空回复，再问一次试试）</span>'; }
+    var t = acc.replace(/\s+$/, '');
+    state.msgs.push({ role:'assistant', content:t });
+    var acts = document.createElement('div');
+    acts.className = 'wask-acts';
+    var cp = document.createElement('button');
+    cp.type = 'button'; cp.textContent = '复制';
+    cp.addEventListener('click', function(){
+      if(navigator.clipboard){ try{ navigator.clipboard.writeText(t); }catch(e){} }
+      cp.textContent = '已复制';
+      setTimeout(function(){ cp.textContent = '复制'; }, 1200);
+    });
+    acts.appendChild(cp);
+    node.wrap.appendChild(acts);
+    scrollBottom(true);
+  }
+
+  state.ctrl = (window.AbortController) ? new AbortController() : null;
+  setBusy(true);
+
+  var payload = {
+    model: CFG.model,
+    stream: true,
+    max_tokens: 4096,
+    messages: [{ role:'system', content: SYS }].concat(state.msgs)
+  };
+  if(!isDeep()){ payload.reasoning_effort = 'low'; }
+
+  fetch(CFG.endpoint, {
+    method:'POST',
+    headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
+    body: JSON.stringify(payload),
+    signal: state.ctrl ? state.ctrl.signal : undefined
+  }).then(function(res){
+    if(!res.ok){
+      return res.text().then(function(t){
+        var msg = 'HTTP ' + res.status;
+        if(res.status === 401 || res.status === 403){ msg += '　API Key 不对或没权限，点右上「设置」换一个。'; }
+        else{ msg += '　' + String(t || '').replace(/\s+/g,' ').slice(0, 160); }
+        throw new Error(msg);
+      });
+    }
+    if(!res.body || !res.body.getReader){
+      return res.json().then(function(j){
+        var m = j && j.choices && j.choices[0] && j.choices[0].message;
+        acc = (m && m.content) || '';
+        finish(acc ? '' : '（空回复）');
+      });
+    }
+    var rd = res.body.getReader();
+    var dec = new TextDecoder('utf-8');
+    var bufStr = '';
+    function pump(){
+      return rd.read().then(function(r){
+        if(r.done){ finish(''); return; }
+        bufStr += dec.decode(r.value, { stream:true });
+        var parts = bufStr.split('\n');
+        bufStr = parts.pop();
+        for(var i = 0; i < parts.length; i++){
+          var ln = parts[i].trim();
+          if(!ln || ln.indexOf('data:') !== 0){ continue; }
+          var data = ln.slice(5).trim();
+          if(data === '[DONE]'){ continue; }
+          var j;
+          try{ j = JSON.parse(data); }catch(e){ continue; }
+          var d = j.choices && j.choices[0] && j.choices[0].delta;
+          if(!d){ continue; }
+          if(d.reasoning_content){ rea += d.reasoning_content; }
+          if(d.content){ acc += d.content; }
+          paint();
+        }
+        return pump();
+      });
+    }
+    return pump();
+  }).catch(function(err){
+    if(err && (err.name === 'AbortError' || /aborted/i.test(err.message || ''))){
+      finish(acc ? '' : '');
+      if(acc){ addErr('已停止。'); }
+      return;
+    }
+    finish('请求失败：' + (err && err.message ? err.message : String(err)));
+  });
+}
+
+function autoGrow(){
+  input.style.height = 'auto';
+  input.style.height = Math.min(150, Math.max(44, input.scrollHeight)) + 'px';
+}
+
+sendBt.addEventListener('click', send);
+input.addEventListener('input', autoGrow);
+input.addEventListener('keydown', function(e){
+  if(e.key === 'Enter' && !e.shiftKey && !e.isComposing){
+    e.preventDefault();
+    send();
+  }
+});
+document.getElementById('waskClose').addEventListener('click', closePanel);
+document.getElementById('waskClear').addEventListener('click', function(){
+  abort();
+  state.msgs = [];
+  state.sentMark = -1;
+  msgsEl.innerHTML = '';
+  renderEmpty();
+  hintEl.textContent = '';
+});
+document.getElementById('waskCfgBtn').addEventListener('click', function(){
+  if(setupBox){ closeSetup(); return; }
+  var old = apiKey();
+  openSetup();
+  if(setupBox){
+    var box = setupBox.querySelector('input');
+    box.value = '';
+    box.placeholder = old ? '已保存 sk-…' + old.slice(-4) + '（留空不改）' : 'sk-...';
+    setupBox.querySelector('#waskKeySave').onclick = function(){
+      var v = box.value.trim();
+      if(!v){ closeSetup(); return; }
+      lsSet(LS_KEY, v);
+      closeSetup();
+      pushSys('Key 已更新。');
+    };
+  }
+});
+document.getElementById('waskQX').addEventListener('click', function(){
+  state.quote = null;
+  renderQuote();
+});
+deepCb.addEventListener('change', function(){ lsSet(LS_DEEP, deepCb.checked ? '1' : '0'); });
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){
+    if(!menu.hidden){ hideMenu(); return; }
+    if(document.body.classList.contains('wask-open')){ closePanel(); }
+  }
+}, true);
+
+/* ── 挂一个入口按钮到右下角控制条 ─────────────────────── */
+(function(){
+  var ctl = document.querySelector('.fd-ctl');
+  var btn = document.createElement('button');
+  btn.type = 'button'; btn.id = 'waskEntry'; btn.textContent = '提问';
+  btn.title = '选中正文任意一段后右键，也可以直接点这里';
+  btn.addEventListener('click', function(){ togglePanel(); });
+  if(ctl){ ctl.insertBefore(btn, ctl.firstChild); }
+  else{
+    btn.style.cssText = 'position:fixed;right:16px;bottom:64px;z-index:9997;padding:5px 12px;'
+      + 'font-family:inherit;font-size:12.5px;border:1px solid #e2c9c9;background:#fff;'
+      + 'color:#8b1f1f;border-radius:4px;cursor:pointer;';
+    document.body.appendChild(btn);
+  }
+})();
+
+/* 恢复上次的「深想」偏好 */
+if(deepCb && lsGet(LS_DEEP) === '1'){ deepCb.checked = true; }
+document.getElementById('waskModelTag').textContent = CFG.model;
+
+/* 调试口（无副作用，供自检脚本调用） */
+window.__wask = {
+  open: openPanel,
+  quote: function(text, ctx){ state.quote = { text:text, ctx:ctx || '' }; state.quoteMark++; renderQuote(); openPanel(); },
+  ask: function(q){ input.value = q; send(); },
+  key: apiKey
+};
+})();
+</script>
+<!-- /WBS-ASK-WIDGET -->

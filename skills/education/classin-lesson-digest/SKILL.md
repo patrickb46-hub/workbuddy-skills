@@ -1,5 +1,6 @@
 ---
 name: classin-lesson-digest
+license: Proprietary
 description: >-
   把 ClassIn 课堂截图整理成复习资料：离线 OCR 识别图片文字，分出「例题 / 习题 / 知识点 / 答题方法」，
   例题习题配对解答后输出一份可打印的 HTML；把答题方法等可迁移内容合并进一个累积 docx 并自动去重。
@@ -28,7 +29,7 @@ ClassIn 笔记助手（`~/Desktop/Tools/ClassIn笔记助手/`）上课时把板�
 ## 环境
 
 ```bash
-PY=python3
+PY=$HOME/.workbuddy/binaries/python/envs/default/bin/python
 SK=~/.workbuddy/skills/classin-lesson-digest
 ROOT=~/Desktop/黄老师语文          # 笔记助手的保存位置，可在界面里改
 ```

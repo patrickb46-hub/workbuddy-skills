@@ -199,7 +199,7 @@ def cmd_probe(args):
     except ImportError:
         out["checks"]["pillow"] = {
             "ok": False,
-            "hint": "本解释器没有 Pillow。用 python3 运行。",
+            "hint": "本解释器没有 Pillow。用 $HOME/.workbuddy/binaries/python/envs/default/bin/python 运行。",
         }
 
     # ffmpeg
@@ -328,7 +328,7 @@ def cmd_sheet(args):
         from PIL import Image
     except ImportError:
         die(
-            "缺少 Pillow。用 python3 运行本脚本。"
+            "缺少 Pillow。用 $HOME/.workbuddy/binaries/python/envs/default/bin/python 运行本脚本。"
         )
 
     cache = {}

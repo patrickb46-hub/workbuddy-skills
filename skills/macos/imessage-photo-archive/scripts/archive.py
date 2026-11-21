@@ -138,7 +138,7 @@ def main():
     ap.add_argument("--db", default=DEFAULT_DB)
     ap.add_argument("--date", help="YYYY-MM-DD，从该日 00:00 起")
     ap.add_argument("--days", type=int, default=1, help="不指定 --date 时取最近 N 天")
-    ap.add_argument("--handle", help="只取该联系人的地址（如 <handle>@icloud.com）")
+    ap.add_argument("--handle", help="只取该联系人的地址（如 xxx@icloud.com）")
     ap.add_argument("--out", required=True, help="目标根目录")
     ap.add_argument("--map", action="append", default=[],
                     metavar="文字[张数]=相对路径", help="可多次；覆盖默认的分组名")

@@ -22,7 +22,11 @@ UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
       "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36")
 
 HOME = os.path.expanduser("~/.workbuddy/skills/bilibili-studio")
-COOKIE_FILE = os.path.join(HOME, "data", "cookies.json")
+# 2026-11-15：凭证已移出技能目录，避免技能被打包/开源/分享时泄漏账号。
+# 可用环境变量 BILI_SECRET_DIR 覆盖。
+SECRETS = os.path.expanduser(
+    os.environ.get("BILI_SECRET_DIR", "~/.workbuddy/secrets/bili"))
+COOKIE_FILE = os.path.join(SECRETS, "cookies.json")
 
 # 创作中心频率限制较严，两次请求之间至少隔这么久
 _MIN_INTERVAL = 0.8

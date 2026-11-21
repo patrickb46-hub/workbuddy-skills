@@ -1,5 +1,6 @@
 ---
 name: aviation-ai-daily
+license: Proprietary
 description: 每天生成一节「航空 × AI 软硬件」图文课件（单文件 HTML），双线交替、零基础起步、强制纠偏。当用户要求每日一课、上航空课/AI 课、生成今日课件、查看课程进度，或定时任务触发每日学习内容时使用。触发词：每日一课、今天的课、航空课、AI 课、上课、课件、课程进度、铺路、aviation lesson。
 agent_created: true
 ---
@@ -24,7 +25,7 @@ agent_created: true
 所有课件平铺在一个文件夹里，按"日期 + 课号"命名，索引就在旁边：
 
 ```
-~/Desktop/每日简报/Daily Lesson/
+$HOME/Desktop/每日简报/Daily Lesson/
   index.html                                  ← 索引页（复习入口，带筛选）
   2026-10-30_A01_飞机为什么能飞.html
   2026-10-31_B01_什么是AI.html
@@ -105,7 +106,7 @@ agent_created: true
   `.kp` 那一行是给复习用的，必须写——他翻索引时不用点进去就能回忆要点。
 
 ### 6. 交付
-用 `present_files` 打开当天课件，正文回复里给三行：今天讲了什么、三条记忆点、明天讲什么。
+用 `present_files` 打开当天课件（WorkBuddy）；在 dsh 里没有这个工具，改成在回复里用行内反引号写出课件的绝对路径。正文回复里给三行：今天讲了什么、三条记忆点、明天讲什么。
 **不要**把整篇课件内容复述到对话里——他要的是读课件，不是读聊天记录。
 
 ## 参考文件

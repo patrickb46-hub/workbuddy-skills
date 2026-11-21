@@ -1,5 +1,6 @@
 ---
 name: pdf-to-a4-landscape
+license: Proprietary
 description: 把 PDF 里内嵌的照片/扫描件重排到 A4 横版（或自定义纸张）页面上，做到等比放大、零裁切、零重编码。当用户说「把照片填满 A4」「改成横版/竖版打印」「照片太小想放大」「PDF 页面下半截是空的想占满」「按纸张重新排版扫描件」时使用。
 agent_created: true
 ---
@@ -62,7 +63,7 @@ python3 scripts/rebuild_a4_landscape.py <源.pdf> <输出.pdf> [fit|cover]
 8. 中文路径用 `pathlib.Path` 原样传参，注意 macOS NFD/NFC 归一化，别用 glob 匹配后再做字符串 `==`。
 
 ## 校验（用现成 venv，零安装）
-`python3` 里有 PyMuPDF，可做只读校验：
+`$HOME/.workbuddy/binaries/python/envs/default/bin/python` 里有 PyMuPDF，可做只读校验：
 
 ```python
 import fitz, hashlib

@@ -5,10 +5,10 @@
 #   bash new_project.sh mc-launcher-ban
 #   bash new_project.sh mc-launcher-ban --title "PCL 关闭下载"
 #
-# 产物固定落在 ~/BilibiliVideos/<slug>/
+# 产物固定落在 $HOME/Desktop/AI/Bilibili Videos/<slug>/
 set -eu
 
-ROOT="${BILIBILI_VIDEOS_ROOT:-$HOME/BilibiliVideos}"
+ROOT="$HOME/Desktop/AI/Bilibili Videos"
 SKILL="$HOME/.workbuddy/skills/bilibili-explainer"
 
 SLUG="${1:-}"
@@ -105,6 +105,6 @@ echo "下一步："
 echo "  1) 填 $DIR/sources.md      ← 事实先钉死"
 echo "  2) 写 $DIR/script.json     ← 按六段式，先算字数"
 echo "  3) 配音："
-echo "     python3 \\"
-echo "       ~/.workbuddy/skills/tts-explainer-video/scripts/tts_narrate.py \\"
+echo "     $HOME/.workbuddy/binaries/python/envs/default/bin/python \\"
+echo "       ~/.workbuddy/skills/bilibili-explainer/scripts/tts_narrate.py \\"
 echo "       \"$DIR/script.json\" --voice B --out \"$DIR\""

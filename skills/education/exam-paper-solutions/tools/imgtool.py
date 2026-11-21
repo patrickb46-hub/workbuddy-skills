@@ -14,7 +14,7 @@ imgtool —— 试卷图片处理内核（AI 版命令行入口）
 
 调用约定（写给 AI 助手看）
     1. 解释器固定用带 Pillow 的那个：
-       python3
+       $HOME/.workbuddy/binaries/python/envs/default/bin/python
     2. 所有子命令 **默认输出一行 JSON**，结构固定含 "ok" 字段，失败时 "ok": false
        并附 "error"；成功时结果放在 "outputs" / "files" 等字段里。
     3. 加 --human 可以换成给人看的中文文本。

@@ -31,7 +31,7 @@ const t = (at: number[], i: number) => at[Math.min(i, Math.max(0, at.length - 1)
  * 本片文案
  * ============================================================ */
 export const CONTENT = {
-  header: { left: '{{AUTHOR}}', right: '科普 · 能力边界' },
+  header: { left: 'String255', right: '科普 · 能力边界' },
 
   s1: {
     kicker: '一道几何题，一个出错的地方',
@@ -596,6 +596,38 @@ export const MyCover: React.FC = () => {
       <div style={{ position: 'absolute', right: 96, top: 150, opacity: c01((p - 0.2) / 0.8) }}>
         <div style={{ background: PANEL, border: `1.5px solid ${RULE}`, borderRadius: 16, padding: 26 }}>
           <GeoFigure variant="topology" width={520} />
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+/* ================= 封面 · 4:3（1440×1080） ================= */
+export const MyCover43: React.FC = () => {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const p = spring({ frame: f, fps, config: { damping: 30, stiffness: 90 } });
+  return (
+    <AbsoluteFill style={{ backgroundColor: BG }}>
+      <div style={{ position: 'absolute', left: 92, top: 84 }}>
+        <div style={{ fontFamily: F, fontSize: 25, letterSpacing: 4, color: MUTED,
+          opacity: c01(p) }}>一道几何题 · 一个出错的地方</div>
+        <div style={{ marginTop: 26, fontFamily: F, fontSize: 106, fontWeight: 600,
+          lineHeight: 1.14, letterSpacing: -2, color: INK }}>
+          数字全对
+          <br />
+          <span style={{ color: CB, opacity: c01((p - 0.3) / 0.7) }}>图是错的</span>
+        </div>
+        <div style={{ width: 128 * p, height: 5, background: CA, marginTop: 30 }} />
+        <div style={{ fontFamily: F, fontSize: 29, color: MUTED, marginTop: 22,
+          opacity: c01((p - 0.5) / 0.5) }}>
+          AI 画几何图，错在哪、为什么错、怎么查
+        </div>
+      </div>
+
+      <div style={{ position: 'absolute', left: 500, top: 600, opacity: c01((p - 0.2) / 0.8) }}>
+        <div style={{ background: PANEL, border: `1.5px solid ${RULE}`, borderRadius: 16, padding: 20 }}>
+          <GeoFigure variant="topology" width={400} />
         </div>
       </div>
     </AbsoluteFill>

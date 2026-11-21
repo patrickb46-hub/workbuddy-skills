@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>【学科】《【卷名】》全解</title>
+<style>
+:root{ --ink:#1a1a1a; --sub:#555; --line:#d8d8d8; --accent:#8b1f1f;
+       --accent2:#f6efef; --ok:#1f5c3d; --warnbg:#fdf7e6; }
+*{ box-sizing:border-box; }
+body{ font-family:"Songti SC","STSong","Noto Serif CJK SC",serif; font-size:15px;
+      line-height:1.85; color:var(--ink); background:#f2f2ef; margin:0; padding:18px 0; }
+.page{ max-width:900px; margin:0 auto 26px; background:#fff; padding:38px 42px 46px;
+       border:1px solid var(--line); }
+h1{ font-size:22px; margin:0 0 8px; letter-spacing:.4px; }
+h2{ font-size:17px; border-left:5px solid var(--accent); background:var(--accent2);
+    padding:5px 12px; margin:26px 0 12px; }
+h3{ font-size:15.5px; margin:18px 0 8px; color:#333; }
+.meta{ color:var(--sub); font-size:13.5px; border-bottom:1px solid var(--line);
+       padding-bottom:10px; margin-bottom:6px; }
+.stem{ background:#fbfbf9; border:1px solid var(--line); padding:14px 18px; margin:10px 0; }
+.stem p{ margin:6px 0; }
+.pf{ margin:3px 0 3px 12px; text-indent:-12px; padding-left:12px; }
+.pf .rs{ color:var(--ok); }
+/* 撇号 ′：宋体里是全宽字形，会把 A′B 撑成「A′ B」，统一用 .pm 收窄 */
+.pm{ font-family:Georgia,"Times New Roman",serif; margin-right:-0.12em; }
+.final{ display:inline-block; padding:5px 14px; border:2px solid var(--accent);
+        border-radius:3px; font-weight:700; color:var(--accent); }
+.fig{ text-align:center; margin:16px 0 4px; }
+.fig svg{ max-width:100%; height:auto; }
+.cap{ font-size:13px; color:var(--sub); text-align:center; margin:4px 0 16px; line-height:1.7; }
+.note{ background:var(--warnbg); border-left:3px solid #d9b44a; padding:8px 14px;
+       margin:14px 0; font-size:14px; }
+.kptable{ width:100%; border-collapse:collapse; font-size:14px; margin:10px 0 6px; }
+.kptable th,.kptable td{ border:1px solid var(--line); padding:6px 9px; text-align:left;
+       vertical-align:top; }
+.kptable th{ background:var(--accent2); color:var(--accent); font-weight:700; }
+.kptable td.c{ text-align:center; }
+.step{ font-weight:700; color:var(--accent); margin:16px 0 4px; }
+/* 完整解答开头的「作图（重述）」：把①辅助线原样再写一遍，让解答自洽 */
+.restate{ background:#f7f7f4; border-left:3px solid #b9b9b0; padding:8px 14px 6px;
+          margin:6px 0 14px; }
+.restate-t{ font-size:13px; font-weight:700; color:var(--sub); letter-spacing:1px;
+            display:block; margin-bottom:2px; }
+.restate .pf{ margin:3px 0; }
+
+/* ── 题卡头（题号旁挂「本题展开／折叠」按钮） ── */
+.qcard{ margin:24px 0 8px; }
+.qhd{ display:flex; align-items:baseline; gap:10px; margin:0 0 4px;
+      padding:2px 0 6px; border-bottom:2px solid var(--accent); }
+.qno{ font-size:17px; font-weight:700; color:var(--accent); letter-spacing:.5px; }
+.qsub{ font-size:13px; color:var(--sub); }
+.qbtn{ margin-left:auto; flex:none; font-family:inherit; font-size:12.5px; line-height:1.3;
+       padding:3px 10px; border:1px solid #e2c9c9; background:#fafaf8; color:var(--accent);
+       border-radius:3px; cursor:pointer; }
+.qbtn:hover{ background:var(--accent2); }
+
+/* ── 折叠块（checkbox 驱动，打印靠 !important 全展开） ── */
+.fd{ margin:7px 0; }
+.fd-cb{ position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
+.fd-hd{ display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none;
+        background:#fafaf8; border:1px solid var(--line); border-left:3px solid var(--accent);
+        padding:4px 10px; font-size:14px; font-weight:700; color:#333; }
+.fd-hd:hover{ background:var(--accent2); }
+.fd-hd .fd-t{ color:#333; }
+.fd-ic{ margin-left:auto; color:var(--accent); font-size:13px; font-style:normal; }
+.fd-ic::before{ content:"＋"; }
+.fd-cb:checked ~ .fd-hd .fd-ic::before{ content:"－"; }
+.fd-bd{ display:none; padding:8px 2px 4px 14px; border-left:1px dashed var(--line); margin-left:2px; }
+.fd-cb:checked ~ .fd-bd{ display:block; }
+/* 思路里的小步：低一级的视觉 */
+.fd-sm > .fd-hd{ border-left:2px solid #bbb; background:#fcfcfa; font-size:13.5px; font-weight:400; color:#444; }
+.fd-sm > .fd-hd .fd-t{ font-weight:700; color:var(--sub); }
+.fd-sm > .fd-bd{ padding-left:12px; }
+
+/* ── 右下角：全部展开／折叠 ── */
+.fd-ctl{ position:fixed; right:16px; bottom:16px; z-index:9997; display:flex; gap:6px;
+         padding:6px 8px; background:#fff; border:1px solid var(--line); border-radius:6px;
+         box-shadow:0 2px 12px rgba(0,0,0,.10); font-family:"Songti SC","STSong",serif;
+         opacity:.55; transition:opacity .18s; }
+.fd-ctl:hover{ opacity:1; }
+.fd-ctl button{ font-family:inherit; font-size:12.5px; padding:4px 10px; border:1px solid #e2c9c9;
+         background:#fafaf8; color:var(--accent); border-radius:4px; cursor:pointer; }
+.fd-ctl button:hover{ background:var(--accent2); }
+
+@media print{
+  body{ background:#fff; padding:0; font-size:12pt; }
+  .page{ border:none; box-shadow:none; padding:0 12mm; max-width:none;
+         page-break-after:always; }
+  .page:last-child{ page-break-after:auto; }
+  .note{ background:#fff; border-left:2px solid #999; }
+  /* 关键：打印时四段全部展开，不能依赖 checkbox 状态 */
+  .fd-bd{ display:block !important; border-left:none; padding-left:0; }
+  .fd-hd{ background:#fff; border:0; border-bottom:1px solid var(--line); padding-left:0; }
+  .fd-ic,.qbtn,.fd-ctl{ display:none !important; }
+  .fd-sm > .fd-hd{ border-bottom:1px dotted var(--line); }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 第 1 页：题目原文 ============ -->
+<div class="page">
+  <h1>【学科】《【卷名】》全解</h1>
+  <div class="meta">题型：【…】｜单位：【…】｜涉及工具：【…】</div>
+
+  <h2>一、题目原文</h2>
+  <div class="stem">
+    <p>【逐字录入题干】</p>
+    <p>（1）【小问】</p>
+    <p>（2）【小问】</p>
+  </div>
+
+  <div class="note">
+    <b>怎么用这份全解：</b>每题分四段折叠 —— <b>辅助线 → 思路 → 答案 → 完整解答</b>。
+    先自己动手，卡住再逐段点开；题号右边的按钮一键展开／折叠本题，
+    右下角「全部展开解答」只摊开四段里的完整解答，「全部展开」才连辅助线思路一起摊开；
+    右上角可按题号或关键词搜索（打印时四段自动全部展开）。
+    <br><b>想问一句：</b>选中正文任意一段 → 右键 →「提问」，右侧会开一个侧栏，可以直接把这段讲透。
+  </div>
+</div>
+
+<!-- ============ 第 2 页：题卡（本块就是标准骨架，复制即可） ============ -->
+<div class="page">
+  <section class="qcard" id="q1">
+    <div class="qhd q">
+      <span class="qno">第 1 题</span>
+      <span class="qsub">【一句话题型：如 坐标系建模 ＋ 最短路径】</span>
+      <button class="qbtn" type="button" data-target="q1">展开本题</button>
+    </div>
+
+    <!-- ① 辅助线 -->
+    <div class="fd">
+      <input type="checkbox" class="fd-cb" id="f1-aux">
+      <label class="fd-hd" for="f1-aux"><span class="fd-t">辅助线</span><span class="fd-ic"></span></label>
+      <div class="fd-bd">
+        <p class="pf">【画哪条线／作哪个点／建什么系，一句话一条】<span class="rs">（依据）</span></p>
+        <p class="pf">【为什么画这条：它把哪个条件变成了可用的关系】</p>
+      </div>
+    </div>
+
+    <!-- ② 思路（分小步折叠） -->
+    <div class="fd">
+      <input type="checkbox" class="fd-cb" id="f1-idea">
+      <label class="fd-hd" for="f1-idea"><span class="fd-t">思路</span><span class="fd-ic"></span></label>
+      <div class="fd-bd">
+        <div class="fd fd-sm">
+          <input type="checkbox" class="fd-cb" id="f1-s1">
+          <label class="fd-hd" for="f1-s1"><span class="fd-t">小步 1</span>【这一步干什么】<span class="fd-ic"></span></label>
+          <div class="fd-bd"><p class="pf">【一句话说清，不写算式细节】</p></div>
+        </div>
+        <div class="fd fd-sm">
+          <input type="checkbox" class="fd-cb" id="f1-s2">
+          <label class="fd-hd" for="f1-s2"><span class="fd-t">小步 2</span>【这一步干什么】<span class="fd-ic"></span></label>
+          <div class="fd-bd"><p class="pf">【一句话说清】</p></div>
+        </div>
+        <div class="fd fd-sm">
+          <input type="checkbox" class="fd-cb" id="f1-s3">
+          <label class="fd-hd" for="f1-s3"><span class="fd-t">小步 3</span>【这一步干什么】<span class="fd-ic"></span></label>
+          <div class="fd-bd"><p class="pf">【一句话说清】</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ 答案 -->
+    <div class="fd">
+      <input type="checkbox" class="fd-cb" id="f1-ans">
+      <label class="fd-hd" for="f1-ans"><span class="fd-t">答案</span><span class="fd-ic"></span></label>
+      <div class="fd-bd">
+        <p class="pf"><span class="final">【最终答案，加粗加框】</span></p>
+      </div>
+    </div>
+
+    <!-- ④ 完整解答（自带作图重述，不靠前文指代） -->
+    <div class="fd fd-sol">
+      <input type="checkbox" class="fd-cb" id="f1-sol">
+      <label class="fd-hd" for="f1-sol"><span class="fd-t">完整解答</span><span class="fd-ic"></span></label>
+      <div class="fd-bd">
+        <div class="restate">
+          <span class="restate-t">作图（重述）</span>
+          <p class="pf">【把①的辅助线一字不少再写一遍：作…⊥…，垂足为…；连…交…于…；以…为原点建系】<span class="rs">（作图语句）</span></p>
+        </div>
+        <div class="step">第一步　【…】</div>
+        <p class="pf">【一句一行，句末括号写依据】<span class="rs">（依据）</span></p>
+        <div class="step">第二步　【…】</div>
+        <p class="pf">【…】<span class="rs">（依据）</span></p>
+
+        <div class="fig">
+          <!-- 内联 SVG；画完必须 figcheck 复检 -->
+        </div>
+        <div class="cap">图 1　【图注：画了什么、虚线是什么、关键数值】</div>
+
+        <p class="pf" style="margin-top:10px"><b>答：</b></p>
+        <p class="pf"><span class="final">【答案】</span></p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ 第 3 页：别解／易错／速查 ============ -->
+<div class="page">
+  <h2>二、别解与验算</h2>
+  <div class="fd">
+    <input type="checkbox" class="fd-cb" id="f-alt">
+    <label class="fd-hd" for="f-alt"><span class="fd-t">别解</span>换一条路走，答案必须一样<span class="fd-ic"></span></label>
+    <div class="fd-bd">
+      <p class="pf">【别解过程】</p>
+    </div>
+  </div>
+
+  <h2>三、易错提醒</h2>
+  <table class="kptable">
+    <tr><th style="width:6%">#</th><th style="width:38%">错误做法</th><th>为什么错 / 正确做法</th></tr>
+    <tr><td class="c">1</td><td>【…】</td><td>【…】</td></tr>
+  </table>
+
+  <h2>四、答案速查表</h2>
+  <table class="kptable">
+    <tr><th style="width:10%">题号</th><th style="width:34%">答案</th><th>关键步骤</th></tr>
+    <tr><td class="c">1</td><td><b>【…】</b></td><td>【…】</td></tr>
+  </table>
+</div>
+
+<div class="fd-ctl" role="group" aria-label="折叠控制">
+  <button type="button" id="fdOpenSol">全部展开解答</button>
+  <button type="button" id="fdOpenAll">全部展开</button>
+  <button type="button" id="fdCloseAll">全部折叠</button>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var cards = [].slice.call(document.querySelectorAll('.qcard'));
+
+  function cbsOf(el){ return [].slice.call(el.querySelectorAll('.fd-cb')); }
+  function allOn(list){ return list.length > 0 && list.every(function(c){ return c.checked; }); }
+
+  /* 同步每题按钮的文案：全展开→「折叠本题」，否则→「展开本题」 */
+  function sync(){
+    cards.forEach(function(card){
+      var btn = card.querySelector('.qbtn');
+      if(!btn){ return; }
+      btn.textContent = allOn(cbsOf(card)) ? '折叠本题' : '展开本题';
+    });
+  }
+
+  /* 单题按钮：一键展开/折叠本题全部四段（含思路里的小步） */
+  cards.forEach(function(card){
+    var btn = card.querySelector('.qbtn');
+    if(!btn){ return; }
+    btn.addEventListener('click', function(){
+      var list = cbsOf(card);
+      var open = !allOn(list);
+      list.forEach(function(c){ c.checked = open; });
+      sync();
+    });
+  });
+
+  /* 全部展开 / 全部展开解答 / 全部折叠 */
+  var all = cbsOf(document);
+  var oa = document.getElementById('fdOpenAll');
+  var ca = document.getElementById('fdCloseAll');
+  var os = document.getElementById('fdOpenSol');
+  if(oa){ oa.addEventListener('click', function(){ all.forEach(function(c){ c.checked = true; }); sync(); }); }
+  if(ca){ ca.addEventListener('click', function(){ all.forEach(function(c){ c.checked = false; }); sync(); }); }
+  /* 「全部展开解答」：只摊开四段里的「完整解答」，辅助线／思路／答案保持原状 */
+  if(os){
+    os.addEventListener('click', function(){
+      [].slice.call(document.querySelectorAll('.fd-sol > .fd-cb')).forEach(function(c){ c.checked = true; });
+      sync();
+    });
+  }
+
+  /* 手动点标题后，按钮文案跟着变 */
+  document.addEventListener('change', function(e){
+    if(e.target && e.target.classList && e.target.classList.contains('fd-cb')){ sync(); }
+  });
+
+  /* 站内搜索命中折叠块内的文字时，自动把这层展开，否则搜到了却看不见 */
+  function reveal(el){
+    var n = el.parentNode, did = false, guard = 0;
+    while(n && n.nodeType === 1 && guard++ < 30){
+      if(n.classList && n.classList.contains('fd-bd')){
+        var p = n.parentNode, cb = null;
+        for(var i = 0; i < p.children.length; i++){
+          if(p.children[i].classList && p.children[i].classList.contains('fd-cb')){ cb = p.children[i]; }
+        }
+        if(cb && !cb.checked){ cb.checked = true; did = true; }
+      }
+      n = n.parentNode;
+    }
+    return did;
+  }
+  if(window.MutationObserver){
+    var mo = new MutationObserver(function(muts){
+      var hit = false;
+      for(var i = 0; i < muts.length; i++){
+        var added = muts[i].addedNodes;
+        for(var j = 0; j < added.length; j++){
+          var nd = added[j];
+          if(nd.nodeType === 1 && nd.classList && nd.classList.contains('wbs-hit')){
+            if(reveal(nd)){ hit = true; }
+          }
+        }
+      }
+      if(hit){
+        sync();
+        var cur = document.querySelector('mark.wbs-cur');
+        if(cur){ setTimeout(function(){ cur.scrollIntoView({ block:'center' }); }, 30); }
+      }
+    });
+    mo.observe(document.body, { childList:true, subtree:true });
+  }
+
+  sync();
+})();
+</script>
+<!-- WBS-SEARCH-WIDGET v2 · 站内搜索（exam-paper-solutions 技能统一注入；删掉这行标记会导致重复注入） -->
+<style>
+.wbs-search{
+  position:fixed; top:12px; right:16px; z-index:9998;
+  display:flex; align-items:center; gap:6px;
+  padding:6px 9px; border:1px solid var(--line,#d8d8d8); border-radius:6px;
+  background:#fff; box-shadow:0 2px 12px rgba(0,0,0,.10);
+  font-family:"Songti SC","STSong","Noto Serif CJK SC",serif; font-size:13px; line-height:1.4;
+  opacity:.42; transition:opacity .18s ease;
+}
+.wbs-search:hover, .wbs-search:focus-within{ opacity:1; }
+.wbs-search .wbs-lb{
+  color:var(--accent,#8b1f1f); font-weight:700; font-size:12px;
+  letter-spacing:1px; padding:0 2px; border-right:1px solid var(--line,#d8d8d8); margin-right:2px;
+}
+.wbs-search input{
+  border:0; outline:0; background:transparent; width:178px;
+  font-family:inherit; font-size:13px; color:#1a1a1a;
+}
+.wbs-search input::placeholder{ color:#aaa; }
+.wbs-search input::-webkit-search-cancel-button{ display:none; }
+.wbs-search .wbs-cnt{ color:#999; font-size:11.5px; min-width:46px; text-align:right; white-space:nowrap; }
+.wbs-search button{
+  border:1px solid var(--line,#d8d8d8); background:#fafaf8; color:#666;
+  border-radius:4px; cursor:pointer; font-size:12px; line-height:1;
+  padding:3px 6px; font-family:inherit;
+}
+.wbs-search button:hover{ background:var(--accent2,#f6efef); color:var(--accent,#8b1f1f); border-color:#e2c9c9; }
+mark.wbs-hit{ background:#ffe28a; color:inherit; border-radius:2px; padding:0 1px; }
+mark.wbs-hit.wbs-cur{ background:#ff9b3d; color:#1a1a1a; box-shadow:0 0 0 2px rgba(255,155,61,.45); }
+.wbs-jump{ animation:wbsFlash 1.4s ease-out; }
+@keyframes wbsFlash{
+  0%{ background:#ffe9a8; box-shadow:0 0 0 3px #ffe9a8; }
+  100%{ background:transparent; box-shadow:none; }
+}
+@media (max-width:760px){ .wbs-search input{ width:118px; } .wbs-search .wbs-cnt{ min-width:38px; } }
+@media print{
+  .wbs-search{ display:none !important; }
+  mark.wbs-hit{ background:transparent !important; color:inherit !important; box-shadow:none !important; }
+  .wbs-jump{ animation:none !important; }
+}
+</style>
+<div class="wbs-search" role="search" aria-label="站内搜索">
+  <span class="wbs-lb">查</span>
+  <input id="wbsInput" type="search" autocomplete="off" spellcheck="false"
+         placeholder="题号（如 6、18(2)）或关键词…" title="回车下一处，Shift+回车上一处，Esc 清空">
+  <span class="wbs-cnt" id="wbsCnt"></span>
+  <button type="button" id="wbsPrev" title="上一处（Shift+Enter）">↑</button>
+  <button type="button" id="wbsNext" title="下一处（Enter）">↓</button>
+  <button type="button" id="wbsClear" title="清空（Esc）">×</button>
+</div>
+<script>
+(function(){
+"use strict";
+if(window.__wbsSearchReady){ return; }
+window.__wbsSearchReady = true;
+
+var input = document.getElementById('wbsInput');
+var cnt   = document.getElementById('wbsCnt');
+if(!input || !cnt){ return; }
+
+var hits = [], cur = -1, timer = null;
+
+function clearMarks(){
+  var ms = document.querySelectorAll('mark.wbs-hit');
+  for(var i = 0; i < ms.length; i++){
+    var m = ms[i], p = m.parentNode;
+    p.replaceChild(document.createTextNode(m.textContent), m);
+    if(p.normalize){ p.normalize(); }
+  }
+  hits = []; cur = -1;
+}
+
+function collect(){
+  var out = [];
+  var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+  var n;
+  while((n = w.nextNode())){
+    var v = n.nodeValue;
+    if(!v || !v.replace(/\s/g, '')){ continue; }
+    var p = n.parentNode, tag = p.nodeName;
+    if(tag === 'SCRIPT' || tag === 'STYLE' || tag === 'MARK' || tag === 'TEXTAREA'){ continue; }
+    if(p.closest && p.closest('.wbs-search')){ continue; }
+    out.push(n);
+  }
+  return out;
+}
+
+function markAll(q){
+  clearMarks();
+  var ql = q.toLowerCase();
+  var nodes = collect();
+  for(var i = 0; i < nodes.length; i++){
+    var node = nodes[i], txt = node.nodeValue, low = txt.toLowerCase();
+    var idx = low.indexOf(ql);
+    if(idx < 0){ continue; }
+    var frag = document.createDocumentFragment(), pos = 0;
+    while(idx >= 0){
+      if(idx > pos){ frag.appendChild(document.createTextNode(txt.slice(pos, idx))); }
+      var mk = document.createElement('mark');
+      mk.className = 'wbs-hit';
+      mk.textContent = txt.slice(idx, idx + q.length);
+      frag.appendChild(mk);
+      hits.push(mk);
+      pos = idx + q.length;
+      idx = low.indexOf(ql, pos);
+    }
+    if(pos < txt.length){ frag.appendChild(document.createTextNode(txt.slice(pos))); }
+    node.parentNode.replaceChild(frag, node);
+  }
+}
+
+function show(){
+  cnt.textContent = hits.length ? ((cur + 1) + '/' + hits.length) : '';
+}
+
+function goto(i){
+  if(!hits.length){
+    cnt.textContent = '无匹配';
+    return;
+  }
+  if(i < 0){ i = hits.length - 1; }
+  if(i >= hits.length){ i = 0; }
+  if(cur >= 0 && hits[cur]){ hits[cur].className = 'wbs-hit'; }
+  cur = i;
+  hits[cur].className = 'wbs-hit wbs-cur';
+  hits[cur].scrollIntoView({ block: 'center' });
+  show();
+}
+
+var QRE = /^\s*第?\s*([0-9]+(?:\.[0-9]+)?)\s*(?:[（(]\s*([0-9]+)\s*[）)])?\s*题?\s*$/;
+
+function findByQ(num){
+  var els = Array.prototype.slice.call(
+    document.querySelectorAll('.q,.kp-item,.kp-no,h2,h3'));
+  var esc = num.replace(/\./g, '\\.');
+  var reA = new RegExp('^第\\s*' + esc + '\\s*题');
+  var reB = new RegExp('(^|[^0-9.])' + esc + '\\s*[.、．题（(]');
+  var reC = new RegExp('^' + esc + '(?![0-9.])');
+  var dotted = num.indexOf('.') >= 0;
+  for(var i = 0; i < els.length; i++){
+    var t = (els[i].textContent || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+    if(!t){ continue; }
+    if(reA.test(t) || reB.test(t)){ return els[i]; }
+    if(dotted && reC.test(t)){ return els[i]; }
+  }
+  return null;
+}
+
+function jumpTo(el){
+  el.classList.remove('wbs-jump');
+  void el.offsetWidth;
+  el.classList.add('wbs-jump');
+  el.scrollIntoView({ block: 'center' });
+}
+
+function doSearch(){
+  var raw = input.value.trim();
+  if(!raw){ clearMarks(); cnt.textContent = ''; return; }
+
+  var m = raw.match(QRE);
+  if(m && raw.length <= 10){
+    var el = findByQ(m[1]);
+    if(el){ clearMarks(); cnt.textContent = '第' + m[1] + '题'; jumpTo(el); return; }
+  }
+  markAll(raw);
+  if(hits.length){ goto(0); } else { cnt.textContent = '无匹配'; }
+}
+
+input.addEventListener('input', function(){
+  clearTimeout(timer);
+  timer = setTimeout(doSearch, 160);
+});
+
+input.addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    if(!hits.length){ doSearch(); }
+    else if(e.shiftKey){ goto(cur - 1); }
+    else { goto(cur + 1); }
+  }else if(e.key === 'Escape'){
+    input.value = '';
+    clearMarks();
+    cnt.textContent = '';
+    input.blur();
+  }
+});
+
+document.getElementById('wbsNext').addEventListener('click', function(){
+  if(hits.length){ goto(cur + 1); } else { doSearch(); }
+});
+document.getElementById('wbsPrev').addEventListener('click', function(){
+  if(hits.length){ goto(cur - 1); }
+});
+document.getElementById('wbsClear').addEventListener('click', function(){
+  input.value = '';
+  clearMarks();
+  cnt.textContent = '';
+  input.focus();
+});
+
+document.addEventListener('keydown', function(e){
+  var ae = document.activeElement;
+  if(e.key === '/' && ae !== input && !/^(INPUT|TEXTAREA)$/.test(ae && ae.nodeName)){
+    e.preventDefault();
+    input.focus();
+    input.select();
+  }
+});
+})();
+</script>
+<!-- /WBS-SEARCH-WIDGET -->
+<!-- WBS-ASK-WIDGET v1 · 选中提问（DeepSeek 侧栏） -->
+<script type="application/json" id="waskCfg">{"endpoint":"https://api.deepseek.com/chat/completions","model":"deepseek-flash","key":""}</script>
+<style>
+.wask-panel{
+  position:fixed; top:0; right:0; bottom:0; width:400px; max-width:94vw; z-index:9999;
+  display:flex; flex-direction:column; background:#fff;
+  border-left:1px solid var(--line,#d8d8d8); box-shadow:-6px 0 26px rgba(0,0,0,.13);
+  font-family:"Songti SC","STSong","Noto Serif CJK SC",serif; font-size:14px;
+  line-height:1.72; color:#1a1a1a;
+  transform:translateX(102%); visibility:hidden; transition:transform .22s ease;
+}
+body.wask-open .wask-panel{ transform:none; visibility:visible; }
+body.wask-open{ padding-right:400px; }
+
+.wask-hd{ display:flex; align-items:center; gap:7px; flex:none;
+  padding:8px 10px 8px 12px; background:var(--accent2,#f6efef);
+  border-bottom:1px solid var(--line,#d8d8d8); }
+.wask-tt{ font-weight:700; color:var(--accent,#8b1f1f); letter-spacing:1px; font-size:14.5px; }
+.wask-tag{ font-size:10.5px; color:#888; background:#fff; border:1px solid var(--line,#d8d8d8);
+  border-radius:9px; padding:0 6px; line-height:15px; }
+.wask-sp{ flex:1; }
+.wask-hd button{ font-family:inherit; font-size:11.5px; line-height:1.4; padding:2px 7px;
+  border:1px solid #e2c9c9; background:#fff; color:var(--accent,#8b1f1f);
+  border-radius:3px; cursor:pointer; }
+.wask-hd button:hover{ background:#fff; border-color:var(--accent,#8b1f1f); }
+.wask-hd label{ font-size:11px; color:#777; display:flex; align-items:center; gap:3px;
+  cursor:pointer; margin-right:3px; }
+.wask-hd label input{ margin:0; }
+
+.wask-body{ flex:1; overflow-y:auto; padding:10px 12px 4px; }
+.wask-quote{ background:#fbfbf9; border:1px solid var(--line,#d8d8d8);
+  border-left:3px solid #c8a5a5; padding:6px 9px; margin-bottom:10px; }
+.wask-quote[hidden]{ display:none !important; }
+.wask-qh{ display:flex; align-items:center; gap:6px; font-size:11px; color:#999; margin-bottom:3px; }
+.wask-qh b{ color:var(--accent,#8b1f1f); font-weight:700; }
+.wask-qh button{ margin-left:auto; border:0; background:none; color:#aaa; cursor:pointer;
+  font-size:14px; line-height:1; padding:0 2px; }
+.wask-qh button:hover{ color:var(--accent,#8b1f1f); }
+.wask-qt{ max-height:108px; overflow-y:auto; font-size:13px; color:#444;
+  white-space:pre-wrap; word-break:break-word; }
+
+.wask-msgs{ padding-bottom:8px; }
+.wask-m{ margin:12px 0; }
+.wask-m .who{ font-size:10.5px; color:#aaa; letter-spacing:1px; margin-bottom:3px; }
+.wask-u .bd{ background:var(--accent2,#f6efef); border-left:3px solid var(--accent,#8b1f1f);
+  padding:7px 10px; white-space:pre-wrap; word-break:break-word; }
+.wask-note{ font-size:10.5px; color:#b08a8a; letter-spacing:.5px; margin-bottom:2px; }
+.wask-a .bd{ background:#fbfbf9; border:1px solid var(--line,#d8d8d8); padding:8px 11px;
+  word-break:break-word; }
+.wask-a .bd p{ margin:6px 0; }
+.wask-a .bd ul,.wask-a .bd ol{ margin:6px 0 6px 20px; padding:0; }
+.wask-a .bd li{ margin:3px 0; }
+.wask-a .bd code{ font-family:ui-monospace,Menlo,monospace; font-size:12.5px;
+  background:#f0efeb; padding:0 3px; border-radius:2px; }
+.wask-a .bd pre{ background:#f4f3ee; border:1px solid var(--line,#d8d8d8); padding:7px 9px;
+  overflow-x:auto; font-size:12.5px; margin:7px 0; }
+.wask-a .bd pre code{ background:none; padding:0; }
+.wask-m .wask-m{ font-family:Georgia,"Times New Roman",serif; font-style:italic;
+  color:#2b2b2b; padding:0 1px; }
+.wask-acts{ margin-top:5px; display:flex; gap:8px; font-size:11px; color:#aaa; }
+.wask-acts button{ border:0; background:none; color:#aaa; cursor:pointer; font-family:inherit;
+  font-size:11px; padding:0; text-decoration:underline dotted; }
+.wask-acts button:hover{ color:var(--accent,#8b1f1f); }
+.wask-think{ border:1px dashed var(--line,#d8d8d8); background:#fcfcfa; color:#8a8a8a;
+  font-size:12px; padding:5px 8px; margin-bottom:6px; }
+.wask-think summary{ cursor:pointer; color:#aaa; font-size:11.5px; }
+.wask-think .tx{ white-space:pre-wrap; margin-top:4px; max-height:180px; overflow-y:auto; }
+.wask-err{ color:#8b1f1f; font-size:12.5px; background:#fdf3f3; border:1px solid #edd4d4;
+  padding:6px 9px; margin:6px 0; }
+.wask-empty{ color:#bbb; font-size:12.5px; text-align:center; padding:26px 8px; line-height:2; }
+
+.wask-ft{ flex:none; border-top:1px solid var(--line,#d8d8d8); padding:8px 10px 9px; background:#fcfcfa; }
+.wask-ft textarea{ width:100%; resize:none; font-family:inherit; font-size:13.5px; line-height:1.6;
+  padding:6px 8px; border:1px solid var(--line,#d8d8d8); border-radius:3px; background:#fff;
+  color:#1a1a1a; outline:none; min-height:44px; max-height:150px; }
+.wask-ft textarea:focus{ border-color:#c8a5a5; }
+.wask-fb{ display:flex; align-items:center; gap:6px; margin-top:6px; }
+.wask-hint{ font-size:10.5px; color:#bbb; flex:1; }
+.wask-send{ font-family:inherit; font-size:13px; padding:4px 16px; cursor:pointer;
+  border:1px solid var(--accent,#8b1f1f); background:var(--accent,#8b1f1f); color:#fff;
+  border-radius:3px; }
+.wask-send:hover{ opacity:.88; }
+.wask-send.stop{ background:#fff; color:var(--accent,#8b1f1f); }
+.wask-send[disabled]{ opacity:.45; cursor:default; }
+
+.wask-setup{ background:#fdf7e6; border:1px solid #e8d9a8; padding:10px 12px; margin:10px 0; font-size:13px; }
+.wask-setup p{ margin:4px 0 8px; color:#6b5a2a; line-height:1.65; }
+.wask-setup input{ width:100%; font-family:ui-monospace,Menlo,monospace; font-size:12px;
+  padding:5px 7px; border:1px solid #d9c98c; border-radius:3px; background:#fff; color:#1a1a1a; }
+.wask-setup .row{ display:flex; gap:6px; margin-top:6px; }
+.wask-setup .row button{ font-family:inherit; font-size:12px; padding:3px 10px; cursor:pointer;
+  border:1px solid #c9b169; background:#fff; color:#6b5a2a; border-radius:3px; }
+.wask-setup .row button.pri{ background:var(--accent,#8b1f1f); border-color:var(--accent,#8b1f1f); color:#fff; }
+
+.wask-menu{ position:fixed; z-index:10000; display:flex; flex-direction:column;
+  min-width:172px; padding:4px; background:#fff; border:1px solid var(--line,#d8d8d8);
+  border-radius:5px; box-shadow:0 6px 22px rgba(0,0,0,.16);
+  font-family:"Songti SC","STSong","Noto Serif CJK SC",serif; font-size:13px; }
+.wask-menu[hidden]{ display:none !important; }
+.wask-menu .pv{ font-size:11px; color:#aaa; padding:3px 8px 5px; border-bottom:1px solid #eee;
+  margin-bottom:3px; max-width:250px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.wask-menu button{ display:flex; align-items:center; gap:7px; font-family:inherit; font-size:13px;
+  text-align:left; padding:5px 9px; border:0; background:none; border-radius:3px;
+  cursor:pointer; color:#333; }
+.wask-menu button:hover{ background:var(--accent2,#f6efef); color:var(--accent,#8b1f1f); }
+.wask-menu button .ic{ width:14px; color:var(--accent,#8b1f1f); font-weight:700; }
+
+/* 侧栏打开时，别让固定控件压在面板底下 */
+body.wask-open .fd-ctl{ right:416px; transition:right .22s ease; }
+body.wask-open .wbs-search{ right:416px; transition:right .22s ease; }
+
+@media (max-width:880px){
+  body.wask-open{ padding-right:0; }
+  body.wask-open .fd-ctl,body.wask-open .wbs-search{ right:16px; }
+  .wask-panel{ width:100%; max-width:100%; }
+}
+@media print{
+  .wask-panel,.wask-menu{ display:none !important; }
+  body.wask-open{ padding-right:0 !important; }
+}
+</style>
+
+<div class="wask-menu" id="waskMenu" hidden>
+  <div class="pv" id="waskPv"></div>
+  <button type="button" id="waskAskBtn"><span class="ic">问</span>提问（选中这段）</button>
+  <button type="button" id="waskCopyBtn"><span class="ic">⧉</span>复制</button>
+</div>
+
+<aside class="wask-panel" id="waskPanel" aria-hidden="true" aria-label="提问侧栏">
+  <div class="wask-hd">
+    <span class="wask-tt">提问</span>
+    <span class="wask-tag" id="waskModelTag">deepseek-flash</span>
+    <span class="wask-sp"></span>
+    <label title="开启后模型会先想再答，更慢但更稳"><input type="checkbox" id="waskDeep">深想</label>
+    <button type="button" id="waskCfgBtn" title="设置 API Key">设置</button>
+    <button type="button" id="waskClear" title="清空本次对话">清空</button>
+    <button type="button" id="waskClose" title="关闭（Esc）">×</button>
+  </div>
+  <div class="wask-body" id="waskBody">
+    <div class="wask-quote" id="waskQuote" hidden>
+      <div class="wask-qh"><b id="waskQCtx">选中内容</b><button type="button" id="waskQX" title="不引用这段">×</button></div>
+      <div class="wask-qt" id="waskQText"></div>
+    </div>
+    <div class="wask-msgs" id="waskMsgs"></div>
+  </div>
+  <div class="wask-ft">
+    <textarea id="waskInput" rows="2" placeholder="想问什么？（Enter 发送，Shift+Enter 换行）"></textarea>
+    <div class="wask-fb">
+      <span class="wask-hint" id="waskHint"></span>
+      <button type="button" class="wask-send" id="waskSend">发送</button>
+    </div>
+  </div>
+</aside>
+
+<script>
+(function(){
+"use strict";
+if(window.__waskReady){ return; }
+window.__waskReady = true;
+
+/* ── 配置 ───────────────────────────────────────────── */
+var DEFAULTS = { endpoint:'https://api.deepseek.com/chat/completions', model:'deepseek-flash', key:'' };
+var CFG = {};
+(function(){
+  for(var k in DEFAULTS){ CFG[k] = DEFAULTS[k]; }
+  var el = document.getElementById('waskCfg');
+  if(!el){ return; }
+  try{
+    var raw = JSON.parse(el.textContent || '{}');
+    for(var k2 in raw){ if(raw[k2]){ CFG[k2] = raw[k2]; } }
+  }catch(e){}
+})();
+
+var LS_KEY = 'wask.ds.key', LS_DEEP = 'wask.deep';
+var SYS = '你是一位耐心的中学老师，正在帮学生看懂一份试卷全解。'
+        + '学生会贴出他选中的原文片段（可能很短、可能是公式），然后提出问题。要求：'
+        + '1) 先给结论，再讲原因，回答控制在 8 行以内，需要时用 1) 2) 3) 分步；'
+        + '2) 每一步都要写清依据（定理名／定义／公式），禁止"显然""易知""同理可得"；'
+        + '3) 数学式子用 $...$ 包裹，分数写 $a/b$ 形式，不要用 LaTeX 复杂命令；'
+        + '4) 学生问的是某一步怎么来的，就把被省掉的中间步骤补全；'
+        + '5) 不整段复述原文；不确定就直说，不许编；'
+        + '6) 用简体中文，语气平和，不吹捧。';
+
+/* ── 元素 ───────────────────────────────────────────── */
+var panel  = document.getElementById('waskPanel');
+var bodyEl = document.getElementById('waskBody');
+var msgsEl = document.getElementById('waskMsgs');
+var quoteEl= document.getElementById('waskQuote');
+var qCtx   = document.getElementById('waskQCtx');
+var qText  = document.getElementById('waskQText');
+var input  = document.getElementById('waskInput');
+var sendBt = document.getElementById('waskSend');
+var hintEl = document.getElementById('waskHint');
+var menu   = document.getElementById('waskMenu');
+var pvEl   = document.getElementById('waskPv');
+var deepCb = document.getElementById('waskDeep');
+if(!panel || !input){ return; }
+
+/* ── 状态 ───────────────────────────────────────────── */
+var state = { msgs:[], quote:null, quoteMark:0, ctrl:null, busy:false, setupOpen:false, sentMark:-1 };
+
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function apiKey(){ return (lsGet(LS_KEY) || CFG.key || '').trim(); }
+function isDeep(){ return !!(deepCb && deepCb.checked); }
+
+/* ── 小工具 ──────────────────────────────────────────── */
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' })[c];
+  });
+}
+var TEX = { '\\times':'×','\\div':'÷','\\cdot':'·','\\pm':'±','\\mp':'∓','\\leq':'≤','\\geq':'≥',
+  '\\neq':'≠','\\approx':'≈','\\angle':'∠','\\triangle':'△','\\circ':'°','\\perp':'⊥',
+  '\\parallel':'∥','\\because':'∵','\\therefore':'∴','\\Rightarrow':'⇒','\\rightarrow':'→',
+  '\\cong':'≌','\\sim':'∽','\\pi':'π','\\alpha':'α','\\beta':'β','\\theta':'θ','\\varphi':'φ',
+  '\\ldots':'…','\\cdots':'…','\\sum':'Σ','\\infty':'∞','\\in':'∈','\\subseteq':'⊆','\\cup':'∪' };
+function tex(t){
+  t = t.replace(/\\frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g, '$1/$2');
+  t = t.replace(/\\sqrt\s*\{([^{}]*)\}/g, '√($1)');
+  t = t.replace(/\\left|\\right/g, '');
+  t = t.replace(/\\[a-zA-Z]+/g, function(m){ return (TEX[m] !== undefined) ? TEX[m] : m.slice(1); });
+  t = t.replace(/[{}]/g, '');
+  t = t.replace(/\^\s*°/g, '°');                                   // 90^\circ → 90^° → 90°
+  t = t.replace(/\^\s*([0-9a-zA-Z+\-])/g, '<sup>$1</sup>');        // x^2
+  return t;
+}
+function inline(s){
+  var out = esc(s);
+  out = out.replace(/\$([^$\n]+)\$/g, function(_, m){ return '<span class="wask-m">' + tex(m) + '</span>'; });
+  out = out.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  out = out.replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>');
+  out = out.replace(/(^|[^*\w])\*([^*\n]+)\*/g, '$1<i>$2</i>');
+  return out;
+}
+/* 极简 markdown：段落 / 有序无序列表 / 代码块 / 强调 / $公式$ */
+function md(src){
+  var lines = String(src).replace(/\r/g,'').split('\n');
+  var html = [], buf = [], list = null, fence = false, code = [];
+  function flushP(){
+    if(!buf.length){ return; }
+    html.push('<p>' + buf.map(inline).join('<br>') + '</p>');
+    buf = [];
+  }
+  function flushL(){
+    if(list){ html.push('</' + list + '>'); list = null; }
+  }
+  for(var i = 0; i < lines.length; i++){
+    var ln = lines[i];
+    if(/^\s*```/.test(ln)){
+      if(fence){ html.push('<pre><code>' + esc(code.join('\n')) + '</code></pre>'); code = []; fence = false; }
+      else{ flushP(); flushL(); fence = true; }
+      continue;
+    }
+    if(fence){ code.push(ln); continue; }
+    if(!ln.trim()){ flushP(); flushL(); continue; }
+    var mo = ln.match(/^\s*(\d+)[.)、]\s+(.*)$/), mu = ln.match(/^\s*[-*·]\s+(.*)$/);
+    if(mu){
+      flushP();
+      if(list !== 'ul'){ flushL(); html.push('<ul>'); list = 'ul'; }
+      html.push('<li>' + inline(mu[1]) + '</li>');
+      continue;
+    }
+    if(mo){
+      flushP();
+      if(list !== 'ol'){ flushL(); html.push('<ol>'); list = 'ol'; }
+      html.push('<li>' + inline(mo[2]) + '</li>');
+      continue;
+    }
+    flushL();
+    buf.push(ln);
+  }
+  if(fence && code.length){ html.push('<pre><code>' + esc(code.join('\n')) + '</code></pre>'); }
+  flushP(); flushL();
+  return html.join('');
+}
+
+/* ── 面板开合 ───────────────────────────────────────── */
+function openPanel(){
+  panel.setAttribute('aria-hidden','false');
+  document.body.classList.add('wask-open');
+  renderQuote();
+  if(!apiKey()){ openSetup(); }
+  renderEmpty();
+  setTimeout(function(){ try{ input.focus(); }catch(e){} }, 240);
+}
+function closePanel(){
+  panel.setAttribute('aria-hidden','true');
+  document.body.classList.remove('wask-open');
+  hideMenu();
+}
+function togglePanel(){ document.body.classList.contains('wask-open') ? closePanel() : openPanel(); }
+
+function renderQuote(){
+  if(!state.quote){ quoteEl.hidden = true; return; }
+  quoteEl.hidden = false;
+  qCtx.textContent = state.quote.ctx || '选中内容';
+  qText.textContent = state.quote.text;
+}
+function renderEmpty(){
+  if(state.msgs.length || state.setupOpen){ return; }
+  if(msgsEl.querySelector('.wask-m')){ return; }
+  var tip = document.createElement('div');
+  tip.className = 'wask-empty';
+  tip.textContent = state.quote ? '已引用这段内容，直接问就行' : '先在正文里选中一段，右键「提问」';
+  msgsEl.appendChild(tip);
+}
+function clearEmpty(){
+  var e = msgsEl.querySelector('.wask-empty');
+  if(e){ e.remove(); }
+}
+
+/* ── 设置（API Key） ─────────────────────────────────── */
+var setupBox = null;
+function openSetup(){
+  state.setupOpen = true;
+  if(setupBox){ setupBox.querySelector('input').focus(); return; }
+  clearEmpty();
+  setupBox = document.createElement('div');
+  setupBox.className = 'wask-setup';
+  setupBox.innerHTML =
+    '<p><b>需要 DeepSeek API Key</b><br>只有你自己的浏览器读得到，存在 localStorage，不写进这份 HTML。'
+    + '去 platform.deepseek.com 取 <code>sk-...</code>，粘进来即可。</p>'
+    + '<input type="password" id="waskKeyIn" placeholder="sk-..." autocomplete="off" spellcheck="false">'
+    + '<div class="row"><button type="button" class="pri" id="waskKeySave">保存并使用</button>'
+    + '<button type="button" id="waskKeyCancel">先不用</button></div>';
+  msgsEl.insertBefore(setupBox, msgsEl.firstChild);
+  var box = setupBox.querySelector('input');
+  if(apiKey()){ box.value = apiKey(); }
+  setupBox.querySelector('#waskKeySave').addEventListener('click', function(){
+    var v = box.value.trim();
+    if(!v){ box.focus(); return; }
+    lsSet(LS_KEY, v);
+    closeSetup();
+    pushSys('Key 已保存，可以提问了。');
+    input.focus();
+  });
+  setupBox.querySelector('#waskKeyCancel').addEventListener('click', closeSetup);
+  box.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); setupBox.querySelector('#waskKeySave').click(); }
+  });
+  box.focus();
+}
+function closeSetup(){
+  state.setupOpen = false;
+  if(setupBox){ setupBox.remove(); setupBox = null; }
+}
+
+/* ── 消息渲染 ───────────────────────────────────────── */
+function pushSys(text){
+  clearEmpty();
+  var d = document.createElement('div');
+  d.className = 'wask-err';
+  d.style.color = '#6b5a2a'; d.style.background = '#fdf7e6'; d.style.borderColor = '#e8d9a8';
+  d.textContent = text;
+  msgsEl.appendChild(d);
+  scrollBottom(true);
+}
+function addMsg(role, text, note){
+  clearEmpty();
+  var wrap = document.createElement('div');
+  wrap.className = 'wask-m ' + (role === 'user' ? 'wask-u' : 'wask-a');
+  var who = document.createElement('div');
+  who.className = 'who';
+  who.textContent = role === 'user' ? '我' : CFG.model;
+  var bd = document.createElement('div');
+  bd.className = 'bd';
+  if(role === 'user'){
+    if(note){
+      var nb = document.createElement('div');
+      nb.className = 'wask-note';
+      nb.textContent = '针对 ' + note;
+      bd.appendChild(nb);
+    }
+    var tx = document.createElement('div');
+    tx.textContent = text;
+    bd.appendChild(tx);
+  }else{
+    bd.innerHTML = md(text);
+  }
+  wrap.appendChild(who); wrap.appendChild(bd);
+  msgsEl.appendChild(wrap);
+  return { wrap:wrap, bd:bd };
+}
+function addErr(text){
+  clearEmpty();
+  var d = document.createElement('div');
+  d.className = 'wask-err';
+  d.textContent = text;
+  msgsEl.appendChild(d);
+  scrollBottom(true);
+}
+function scrollBottom(force){
+  if(!bodyEl){ return; }
+  var near = bodyEl.scrollHeight - bodyEl.scrollTop - bodyEl.clientHeight < 90;
+  if(force || near){ bodyEl.scrollTop = bodyEl.scrollHeight; }
+}
+
+/* ── 选中 → 右键菜单 ────────────────────────────────── */
+function ctxOf(node){
+  var el = (node && node.nodeType === 1) ? node : (node ? node.parentNode : null);
+  if(!el || !el.closest){ return ''; }
+  var card = el.closest('.qcard');
+  var fold = el.closest('.fd');
+  var parts = [];
+  if(card){
+    var no = card.querySelector('.qno');
+    if(no){ parts.push(no.textContent.trim()); }
+  }
+  if(fold){
+    var t = fold.querySelector('.fd-hd .fd-t');
+    if(!t){
+      var hd = fold.querySelector('.fd-hd');
+      if(hd){ t = { textContent: hd.textContent.replace(/[＋－]$/,'').trim().slice(0,10) }; }
+    }
+    if(t && t.textContent.trim()){ parts.push(t.textContent.trim()); }
+  }
+  return parts.join(' · ');
+}
+function showMenu(x, y, preview){
+  pvEl.textContent = preview.length > 34 ? preview.slice(0, 34) + '…' : preview;
+  menu.hidden = false;
+  var w = menu.offsetWidth || 180, h = menu.offsetHeight || 90;
+  var left = Math.min(x, window.innerWidth - w - 8);
+  var top  = Math.min(y, window.innerHeight - h - 8);
+  menu.style.left = Math.max(6, left) + 'px';
+  menu.style.top  = Math.max(6, top) + 'px';
+}
+function hideMenu(){ if(menu){ menu.hidden = true; } }
+
+var pending = null;
+document.addEventListener('contextmenu', function(e){
+  var t = e.target;
+  if(!t || !t.closest){ return; }
+  if(t.closest('.wask-panel') || t.closest('.wask-menu')){ return; }
+  if(/^(INPUT|TEXTAREA|SELECT)$/.test(t.nodeName) || t.isContentEditable){ return; }
+  var sel = window.getSelection();
+  var raw = sel ? sel.toString() : '';
+  var txt = raw.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  if(txt.length < 2){ hideMenu(); return; }
+  e.preventDefault();
+  pending = { text: txt, ctx: ctxOf(sel.anchorNode || t) };
+  showMenu(e.clientX, e.clientY, txt.replace(/\s+/g, ' '));
+}, true);
+
+document.addEventListener('mousedown', function(e){
+  if(menu.hidden){ return; }
+  if(e.target.closest && e.target.closest('.wask-menu')){ e.preventDefault(); return; }
+  hideMenu();
+}, true);
+window.addEventListener('scroll', hideMenu, true);
+window.addEventListener('resize', hideMenu);
+
+document.getElementById('waskAskBtn').addEventListener('click', function(){
+  if(!pending){ hideMenu(); return; }
+  state.quote = { text: pending.text, ctx: pending.ctx };
+  state.quoteMark++;
+  hideMenu();
+  openPanel();
+  renderQuote();
+});
+document.getElementById('waskCopyBtn').addEventListener('click', function(){
+  if(pending && navigator.clipboard){
+    try{ navigator.clipboard.writeText(pending.text); }catch(e){}
+  }
+  hideMenu();
+});
+
+/* ── 发送 ───────────────────────────────────────────── */
+function setBusy(on){
+  state.busy = on;
+  sendBt.textContent = on ? '停止' : '发送';
+  sendBt.classList.toggle('stop', on);
+}
+function abort(){ if(state.ctrl){ try{ state.ctrl.abort(); }catch(e){} } }
+
+function buildContent(q){
+  var c = '';
+  if(state.quote && state.sentMark !== state.quoteMark){
+    c += '【选中原文】' + (state.quote.ctx ? '（' + state.quote.ctx + '）' : '') + '\n'
+       + state.quote.text + '\n\n';
+  }
+  return c + (q || '请把这段讲清楚。');
+}
+
+function send(){
+  if(state.busy){ abort(); return; }
+  var q = input.value.trim();
+  if(!q && !state.quote){ input.focus(); return; }
+  var key = apiKey();
+  if(!key){ openSetup(); return; }
+  closeSetup();
+
+  var fresh = !!(state.quote && state.sentMark !== state.quoteMark);
+  var content = buildContent(q);
+  if(state.quote){ state.sentMark = state.quoteMark; }
+
+  state.msgs.push({ role:'user', content:content });
+  addMsg('user', q || '请把这段讲清楚。', fresh ? (state.quote.ctx || '选中内容') : '');
+  input.value = '';
+  autoGrow();
+  hintEl.textContent = '';
+
+  var node = addMsg('assistant', '');
+  var think = document.createElement('details');
+  think.className = 'wask-think';
+  think.innerHTML = '<summary>思考中…</summary><div class="tx"></div>';
+  var thinkTx = think.querySelector('.tx');
+  node.wrap.insertBefore(think, node.bd);
+  node.bd.innerHTML = '<span style="color:#bbb">…</span>';
+
+  var acc = '', rea = '', raf = 0, done = false;
+  function paint(){
+    if(raf){ return; }
+    raf = requestAnimationFrame(function(){
+      raf = 0;
+      if(rea){ thinkTx.textContent = rea; }
+      if(acc){ node.bd.innerHTML = md(acc); }
+      scrollBottom(false);
+    });
+  }
+  function finish(err){
+    if(done){ return; }
+    done = true;
+    setBusy(false);
+    if(think.parentNode){ think.parentNode.removeChild(think); }
+    if(err){
+      if(acc){ node.bd.innerHTML = md(acc); }
+      else if(node.wrap.parentNode){ node.wrap.parentNode.removeChild(node.wrap); }
+      addErr(err);
+      state.msgs.pop();
+      return;
+    }
+    if(!acc){ node.bd.innerHTML = '<span style="color:#aaa">（空回复，再问一次试试）</span>'; }
+    var t = acc.replace(/\s+$/, '');
+    state.msgs.push({ role:'assistant', content:t });
+    var acts = document.createElement('div');
+    acts.className = 'wask-acts';
+    var cp = document.createElement('button');
+    cp.type = 'button'; cp.textContent = '复制';
+    cp.addEventListener('click', function(){
+      if(navigator.clipboard){ try{ navigator.clipboard.writeText(t); }catch(e){} }
+      cp.textContent = '已复制';
+      setTimeout(function(){ cp.textContent = '复制'; }, 1200);
+    });
+    acts.appendChild(cp);
+    node.wrap.appendChild(acts);
+    scrollBottom(true);
+  }
+
+  state.ctrl = (window.AbortController) ? new AbortController() : null;
+  setBusy(true);
+
+  var payload = {
+    model: CFG.model,
+    stream: true,
+    max_tokens: 4096,
+    messages: [{ role:'system', content: SYS }].concat(state.msgs)
+  };
+  if(!isDeep()){ payload.reasoning_effort = 'low'; }
+
+  fetch(CFG.endpoint, {
+    method:'POST',
+    headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
+    body: JSON.stringify(payload),
+    signal: state.ctrl ? state.ctrl.signal : undefined
+  }).then(function(res){
+    if(!res.ok){
+      return res.text().then(function(t){
+        var msg = 'HTTP ' + res.status;
+        if(res.status === 401 || res.status === 403){ msg += '　API Key 不对或没权限，点右上「设置」换一个。'; }
+        else{ msg += '　' + String(t || '').replace(/\s+/g,' ').slice(0, 160); }
+        throw new Error(msg);
+      });
+    }
+    if(!res.body || !res.body.getReader){
+      return res.json().then(function(j){
+        var m = j && j.choices && j.choices[0] && j.choices[0].message;
+        acc = (m && m.content) || '';
+        finish(acc ? '' : '（空回复）');
+      });
+    }
+    var rd = res.body.getReader();
+    var dec = new TextDecoder('utf-8');
+    var bufStr = '';
+    function pump(){
+      return rd.read().then(function(r){
+        if(r.done){ finish(''); return; }
+        bufStr += dec.decode(r.value, { stream:true });
+        var parts = bufStr.split('\n');
+        bufStr = parts.pop();
+        for(var i = 0; i < parts.length; i++){
+          var ln = parts[i].trim();
+          if(!ln || ln.indexOf('data:') !== 0){ continue; }
+          var data = ln.slice(5).trim();
+          if(data === '[DONE]'){ continue; }
+          var j;
+          try{ j = JSON.parse(data); }catch(e){ continue; }
+          var d = j.choices && j.choices[0] && j.choices[0].delta;
+          if(!d){ continue; }
+          if(d.reasoning_content){ rea += d.reasoning_content; }
+          if(d.content){ acc += d.content; }
+          paint();
+        }
+        return pump();
+      });
+    }
+    return pump();
+  }).catch(function(err){
+    if(err && (err.name === 'AbortError' || /aborted/i.test(err.message || ''))){
+      finish(acc ? '' : '');
+      if(acc){ addErr('已停止。'); }
+      return;
+    }
+    finish('请求失败：' + (err && err.message ? err.message : String(err)));
+  });
+}
+
+function autoGrow(){
+  input.style.height = 'auto';
+  input.style.height = Math.min(150, Math.max(44, input.scrollHeight)) + 'px';
+}
+
+sendBt.addEventListener('click', send);
+input.addEventListener('input', autoGrow);
+input.addEventListener('keydown', function(e){
+  if(e.key === 'Enter' && !e.shiftKey && !e.isComposing){
+    e.preventDefault();
+    send();
+  }
+});
+document.getElementById('waskClose').addEventListener('click', closePanel);
+document.getElementById('waskClear').addEventListener('click', function(){
+  abort();
+  state.msgs = [];
+  state.sentMark = -1;
+  msgsEl.innerHTML = '';
+  renderEmpty();
+  hintEl.textContent = '';
+});
+document.getElementById('waskCfgBtn').addEventListener('click', function(){
+  if(setupBox){ closeSetup(); return; }
+  var old = apiKey();
+  openSetup();
+  if(setupBox){
+    var box = setupBox.querySelector('input');
+    box.value = '';
+    box.placeholder = old ? '已保存 sk-…' + old.slice(-4) + '（留空不改）' : 'sk-...';
+    setupBox.querySelector('#waskKeySave').onclick = function(){
+      var v = box.value.trim();
+      if(!v){ closeSetup(); return; }
+      lsSet(LS_KEY, v);
+      closeSetup();
+      pushSys('Key 已更新。');
+    };
+  }
+});
+document.getElementById('waskQX').addEventListener('click', function(){
+  state.quote = null;
+  renderQuote();
+});
+deepCb.addEventListener('change', function(){ lsSet(LS_DEEP, deepCb.checked ? '1' : '0'); });
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){
+    if(!menu.hidden){ hideMenu(); return; }
+    if(document.body.classList.contains('wask-open')){ closePanel(); }
+  }
+}, true);
+
+/* ── 挂一个入口按钮到右下角控制条 ─────────────────────── */
+(function(){
+  var ctl = document.querySelector('.fd-ctl');
+  var btn = document.createElement('button');
+  btn.type = 'button'; btn.id = 'waskEntry'; btn.textContent = '提问';
+  btn.title = '选中正文任意一段后右键，也可以直接点这里';
+  btn.addEventListener('click', function(){ togglePanel(); });
+  if(ctl){ ctl.insertBefore(btn, ctl.firstChild); }
+  else{
+    btn.style.cssText = 'position:fixed;right:16px;bottom:64px;z-index:9997;padding:5px 12px;'
+      + 'font-family:inherit;font-size:12.5px;border:1px solid #e2c9c9;background:#fff;'
+      + 'color:#8b1f1f;border-radius:4px;cursor:pointer;';
+    document.body.appendChild(btn);
+  }
+})();
+
+/* 恢复上次的「深想」偏好 */
+if(deepCb && lsGet(LS_DEEP) === '1'){ deepCb.checked = true; }
+document.getElementById('waskModelTag').textContent = CFG.model;
+
+/* 调试口（无副作用，供自检脚本调用） */
+window.__wask = {
+  open: openPanel,
+  quote: function(text, ctx){ state.quote = { text:text, ctx:ctx || '' }; state.quoteMark++; renderQuote(); openPanel(); },
+  ask: function(q){ input.value = q; send(); },
+  key: apiKey
+};
+})();
+</script>
+<!-- /WBS-ASK-WIDGET -->
+</body>
+</html>

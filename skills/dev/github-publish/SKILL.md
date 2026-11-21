@@ -1,5 +1,6 @@
 ---
 name: github-publish
+license: Proprietary
 description: 把本地项目发布到 GitHub —— 隐私体检、写 .gitignore/LICENSE、本地提交、gh repo create、推送、校验远端。当用户说"上传到 GitHub / 发布到 GitHub / 建个 GitHub 仓库 / 开源这个项目 / push 到 GitHub / 传到 GitHub 上 / 帮我传代码"时使用。内置不可跳过的隐私体检门禁：未过体检不得推送。
 agent_created: true
 ---

@@ -227,7 +227,7 @@ for line in [
     set_font(r, S_BODY_ZH, False, SOFT, cn=True)
     idx += 1
 
-para(doc, "Zhang San  ·  Shanghai World Foreign Language Middle School", S_LABEL, False,
+para(doc, "Zhang San  ·  {{SCHOOL}}", S_LABEL, False,
      MUTED, before=30)
 
 page_break(doc)
@@ -386,7 +386,7 @@ for t in imgs:
 
 para(doc, "制作：Kernel（WorkBuddy）  ·  2026-10", S_LABEL, False, MUTED, before=20)
 
-out = "./out/武康路_演讲稿_中英对照.docx"
+out = "$HOME/Desktop/Recently/Then and Now Project/_work/out/武康路_演讲稿_中英对照.docx"
 doc.save(out)
 print("saved", out, os.path.getsize(out) // 1024, "KB")
 for s in C.SLIDES[:3]:

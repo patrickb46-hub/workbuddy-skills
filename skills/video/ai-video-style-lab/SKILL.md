@@ -1,5 +1,6 @@
 ---
 name: ai-video-style-lab
+license: Proprietary
 description: 三位 B 站 AI 视频创作者的拉片成果库与仿写工坊——"在公司楼下捡钱"（Clawd 像素科幻）、"小然今天吃什么"（AI 编年史/教学）、"plotome"（等距线稿长片）。提供三套可执行的视觉语法、叙事公式、标题公式、提示词模板与代码渲染管线，用来按指定风格做出 AI 视频。触发词：AI视频、做AI视频、纯代码动画、vibe动画、参考XX风格、仿写风格、按plotome那样、Clawd风格、编年史视频、科普动画、技术原理短片、数据可视化视频、暗色科技风、像素风短片、等距线稿、长片动画、AI视频制作、分镜表。
 agent_created: true
 ---

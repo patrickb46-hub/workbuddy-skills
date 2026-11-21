@@ -1,5 +1,6 @@
 ---
 name: bilingual-speech-deck
+license: Proprietary
 description: "把学生调研资料（笔记照片、docx 草稿、新闻来源）做成一套「中英对照演讲稿 + 纯英文极简 PPT」：真实新闻图片、图表/表格/思维导图、逐页一一对应，并交付到桌面。适用于课堂演讲、英语作业展示、Then-and-Now / 社区变迁 / 城市更新类课题。"
 ---
 

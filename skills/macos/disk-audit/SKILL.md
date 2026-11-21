@@ -1,5 +1,6 @@
 ---
 name: disk-audit
+license: Proprietary
 description: >-
   诊断 macOS 磁盘空间占用，输出「哪些直接删、哪些先备份到移动硬盘、哪些需要你判断」的分级清单。
   当用户说「磁盘满了 / 空间不够 / C 盘红了 / 看看谁占了空间 / 清理磁盘 / 大文件在哪 /

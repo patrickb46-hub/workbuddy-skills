@@ -306,7 +306,7 @@ for c_ in credits:
 pagenum(s, 14, TOTAL, color=RGBColor(0xB5, 0xAC, 0x9F))
 note(s, C.SLIDES[13]["en"])
 
-out = "./out/Wukang_Road_Then_and_Now.pptx"
+out = "$HOME/Desktop/Recently/Then and Now Project/_work/out/Wukang_Road_Then_and_Now.pptx"
 os.makedirs(os.path.dirname(out), exist_ok=True)
 prs.save(out)
 print("saved", out, os.path.getsize(out) // 1024, "KB")

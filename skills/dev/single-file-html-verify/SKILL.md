@@ -1,5 +1,6 @@
 ---
 name: single-file-html-verify
+license: Proprietary
 description: 在无人点击的沙箱里验证「单文件 HTML 小工具」的逻辑与界面。适用于用户让改一个自包含的 .html（内置 <script>、零依赖、靠 onclick + getElementById 工作），而需要确认改动真的生效、且没破坏原有功能时。两大手段：① 抽出 <script> 用 node vm + 最小 DOM stub 跑断言（秒级、可批量、能覆盖边界与报错分支）；② 用 playwright 打开 file:// 实跑点击与截图（验证按钮位置、显示/隐藏、窄屏折行、控制台 0 报错）。触发词：单文件 HTML、小工具、计算器、不依赖服务器、stub DOM、无头验证、把交付物验证一遍、回归、改完确认没坏。
 agent_created: true
 ---

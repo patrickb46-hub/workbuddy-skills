@@ -1,6 +1,7 @@
 ---
 name: bilibili-video-study
-description: 在 B 站"拉片"——把参考视频拆成可执行的技法规则，用来提升自己出片的质量。用官方公开接口取元数据、下载直链，尤其是用 videoshot 雪碧图一次抓全片抽帧并逐帧读画面（含硬字幕），产出镜头表、技法清单和出片检查表。触发词：拉片、拆片、扒视频、拆解爆款视频、学习B站视频、看B站教程学到手、分析这个视频怎么剪的、参考样片拆结构、提升视频质量、仿拍、镜头表、分镜分析、分析这个BV号。也用于回答"这个 B 站视频讲了什么/什么风格/节奏多快"。
+license: Proprietary
+description: 在 B 站"拉片"——把参考视频拆成可执行的技法规则，用来提升自己出片的质量。用官方公开接口取元数据、下载直链，尤其是用 videoshot 雪碧图一次抓全片抽帧并逐帧读画面（含硬字幕），产出镜头表、技法清单和出片检查表。触发词：拉片、拆片、扒视频、拆解爆款视频、学习B站视频、看B站教程学到手、分析这个视频怎么剪的、参考样片拆结构、提升视频质量、仿拍、镜头表、分镜分析、分析这个BV号。边界：本技能只答**形式**（怎么拍/怎么剪/什么风格/节奏快慢/镜头怎么排）。若问的是**内容**（这个视频讲了什么、帮我找教程、整理知识点），那是 `bili-study` 的活，别抢。
 agent_created: true
 ---
 
@@ -33,7 +34,7 @@ agent_created: true
 **必须用带 Pillow 的解释器**，系统 python3 没有 Pillow：
 
 ```bash
-PY=python3
+PY=$HOME/.workbuddy/binaries/python/envs/default/bin/python
 S=~/.workbuddy/skills/bilibili-video-study/scripts/bili.py
 $PY $S probe          # 先跑这个，确认 Pillow / ffmpeg / 接口三项状态
 ```

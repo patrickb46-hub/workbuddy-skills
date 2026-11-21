@@ -440,7 +440,7 @@ def main() -> int:
     if not caps["pillow"]["available"]:
         sys.stderr.write(
             "✗ 这个 Python 没有 Pillow，请改用：\n"
-            "  python3 "
+            "  $HOME/.workbuddy/binaries/python/envs/default/bin/python "
             f"{Path(__file__).name}\n"
         )
         return 2

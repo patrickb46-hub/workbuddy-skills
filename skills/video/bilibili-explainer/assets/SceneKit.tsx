@@ -40,7 +40,7 @@ const t = (at: number[], i: number) => at[Math.min(i, Math.max(0, at.length - 1)
  * 改这里：本片文案
  * ============================================================ */
 export const CONTENT = {
-  header: { left: '{{AUTHOR}}', right: '科普 · 事件解读' },
+  header: { left: 'String255', right: '科普 · 事件解读' },
 
   s1: {
     kicker: '2026.10.20 ｜ 一件被传歪的事',
