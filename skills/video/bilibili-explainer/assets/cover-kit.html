@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1920px;height:1080px;overflow:hidden;background:#07080C;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC",sans-serif;
+    -webkit-font-smoothing:antialiased;color:#fff}
+  #glow{position:absolute;width:1500px;height:1100px;left:-260px;top:-320px;filter:blur(10px)}
+  #glow2{position:absolute;width:1200px;height:900px;right:-360px;bottom:-380px;filter:blur(20px)}
+  #grid{position:absolute;inset:0;
+    background-image:radial-gradient(circle at 1px 1px,#222A3A 1px,transparent 0);background-size:46px 46px;opacity:.45}
+  #vig{position:absolute;inset:0;background:radial-gradient(ellipse at 46% 42%,transparent 24%,#000 108%);opacity:.9}
+  .mono{font-family:"SF Mono",ui-monospace,Menlo,monospace;letter-spacing:.2em;text-transform:uppercase}
+  #kicker{position:absolute;left:120px;top:104px;font-size:24px;color:#7E88A0}
+  #title{position:absolute;left:116px;top:250px;width:1400px;font-size:132px;font-weight:850;letter-spacing:-.045em;line-height:1.1}
+  #sub{position:absolute;left:122px;top:620px;font-size:40px;color:#AEB7CA;font-weight:500}
+  #badges{position:absolute;left:122px;bottom:132px;display:flex;gap:14px}
+  .b{padding:14px 24px;border:1px solid #2C3446;border-radius:999px;font-size:26px;color:#C9D2E3;background:#0E1219}
+  #bar{position:absolute;left:122px;top:560px;height:8px;width:220px;border-radius:4px}
+  #shot{position:absolute;right:92px;top:250px;width:600px;opacity:.98;
+    border:1px solid #2C3446;border-radius:18px;box-shadow:0 40px 120px #000C}
+  #chips{position:absolute;right:120px;top:230px;width:440px;display:flex;flex-direction:column;gap:12px}
+  #chips span{font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:23px;color:#8FA0BC;
+    padding:11px 18px;border:1px solid #232B3B;border-radius:10px;background:#0B0F16}
+</style>
+</head>
+<body>
+<div id="grid"></div>
+<div id="glow"></div>
+<div id="glow2"></div>
+<div id="vig"></div>
+<div id="kicker" class="mono"></div>
+<div id="title"></div>
+<div id="bar"></div>
+<div id="sub"></div>
+<div id="badges"></div>
+<img id="shot" src="" style="display:none">
+<div id="chips"></div>
+<script>
+const q = new URLSearchParams(location.search);
+const accent = q.get('accent') || '#2F6BFF';
+document.getElementById('glow').style.background =
+  `radial-gradient(ellipse at 30% 30%, ${accent}55, transparent 62%)`;
+document.getElementById('glow2').style.background =
+  `radial-gradient(ellipse at 70% 70%, ${accent}33, transparent 60%)`;
+document.getElementById('kicker').textContent = q.get('kicker') || '';
+document.getElementById('title').innerHTML = (q.get('title') || '').replace(/\n/g, '<br>');
+document.getElementById('sub').textContent = q.get('sub') || '';
+document.getElementById('bar').style.background = accent;
+const shot = q.get('shot');
+if (shot) { const el = document.getElementById('shot'); el.src = shot; el.style.display = 'block'; }
+const chips = (q.get('chips') || '').split('|').filter(Boolean);
+document.getElementById('chips').innerHTML = chips.map(c => `<span>${c}</span>`).join('');
+const badges = (q.get('badges') || '').split('|').filter(Boolean);
+document.getElementById('badges').innerHTML = badges.map(b =>
+  `<span class="b"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${accent};margin-right:12px;vertical-align:middle"></span>${b}</span>`
+).join('');
+</script>
+</body>
+</html>

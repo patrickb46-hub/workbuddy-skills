@@ -26,7 +26,7 @@ skills/
 
 | 技能 | 说明 |
 | --- | --- |
-| `bilibili-explainer` | 科普讲解短片一条龙：核实事实 → 六段式旁白 → edge-tts 配音 → Remotion 代码画图 → FFmpeg 合成 → 封面 → 投稿 B 站 |
+| `bilibili-explainer` | 科普讲解短片一条龙：核实事实 → 六段式旁白 → edge-tts 配音 → Remotion 代码画图 → FFmpeg 合成 → 封面 → 投稿 B 站；也能出**无旁白快剪宣传片**（HTML 时间轴 + 逐帧截屏 + 原创配乐） |
 | `tts-explainer-video` | 中文配音驱动、代码绘制画面的底层流水线：逐句配音、按实测时长对帧、Remotion 渲染、合成质检 |
 | `bilibili-studio` | B 站创作闭环：投稿 → 抓五维诊断指标复盘 → 沉淀成可验证的策略库 |
 | `bilibili-video-study` | 「拉片」：用官方公开接口 + videoshot 雪碧图逐帧读画面，产出镜头表、技法清单、出片检查表 |
